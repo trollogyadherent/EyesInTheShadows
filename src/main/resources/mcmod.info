@@ -1,0 +1,16 @@
+[
+    {
+      "modid": "${modId}",
+      "name": "${modName}",
+      "description": "Backport of the Eyes in the Darkness mod.",
+      "version": "${modVersion}",
+      "mcversion": "${minecraftVersion}",
+      "url": "",
+      "updateUrl": "",
+      "authorList": ["trollogyadherent"],
+      "credits": "gigaherz",
+      "logoFile": "assets/${modId}/logo.png",
+      "screenshots": [],
+      "dependencies": []
+    }
+]

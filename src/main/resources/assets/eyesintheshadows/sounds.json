@@ -1,0 +1,25 @@
+{
+  "mob.eyes.laugh": {
+    "category": "neutral",
+    "sounds": [
+      "tickle1",
+      "tickle2",
+      "tickle3",
+      "tickle4"
+    ]
+  },
+
+  "mob.eyes.disappear": {
+    "category": "neutral",
+    "sounds": [
+      "screech"
+    ]
+  },
+
+  "mob.eyes.jumpscare": {
+    "category": "neutral",
+    "sounds": [
+      "screech2"
+    ]
+  }
+}
