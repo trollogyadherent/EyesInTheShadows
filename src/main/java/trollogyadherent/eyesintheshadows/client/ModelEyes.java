@@ -124,19 +124,55 @@ public class ModelEyes extends ModelBase {
                 EyesInTheShadows.error("Failed to invoke reflected method 'computeLightValueMethod'");
             }
 
+            System.out.println("xxxxxxxxx");
+            System.out.println(parEntity.worldObj.getSavedLightValue(EnumSkyBlock.Sky, x, y, z));
+            System.out.println(parEntity.worldObj.skylightSubtracted);
+            System.out.println(parEntity.getBrightness(0.F));
+            System.out.println("getAverageLightLevel: " + Util.getAverageLightLevel(parEntity));
+            Util.getSunBrightness(parEntity.worldObj);
+            System.out.println("xxxxxxxxx");
+
             EyesInTheShadows.debug("player yaw: " + RenderManager.instance.playerViewY);
             EyesInTheShadows.debug("eyes yaw head: " + parEntity.rotationYawHead);
             EyesInTheShadows.debug("eyes yaw: " + parEntity.rotationYaw);
             EyesInTheShadows.debug("===================model==================");
         }
 
-        int blockLight = parEntity.worldObj.getBlockLightValue(x, y, z);
+        //int blockLight = parEntity.worldObj.getBlockLightValue(x, y, z);
         //if (parEntity.worldObj.provider.sky)
 
-        float mixAlpha = Util.clamp((8 - blockLight) / 8.0f, 0, 1);
+        //float mixAlpha = Util.clamp((8 - blockLight) / 8.0f, 0, 1);
         //System.out.println(mixAlpha);
 
-        mixAlpha = 1;
+        //float mixAlpha = 1F - parEntity.getBrightness(0.F);//1;
+
+        /*if (Util.isSunVisible(parEntity.worldObj, x, y, z)) {
+            mixAlpha = 0;
+        }*/
+
+        //7boolean isday = parEntity.worldObj.isDaytime();
+        //int saved_lv = parEntity.worldObj.getSavedLightValue(EnumSkyBlock.Block, x, y, z);
+
+        //if (!parEntity.worldObj.provider.hasNoSky && !isday && saved_lv < 9) {
+        //    mixAlpha = 1;
+        //}
+
+        /* A value from 0 to 1 telling how transparent the eyes will be (the more light there is, the more transparent
+            the eyes should be
+        ) */
+        float mixAlpha;
+
+        /* A value of 15 here means the block is exposed to the sky */
+        if (parEntity.worldObj.getBlockLightValue(x, y, z) == 15) {
+            /* If the entity is exposed to the sky, we subtract the sun brightness and the brightness from torches/other light emitting blocks */
+            mixAlpha = 1 - Util.getSunBrightness(parEntity.worldObj) - Util.getLightSourceBrightness(parEntity.worldObj, x, y, z);
+        } else {
+            /* Otherwise, we subtract the light emitted by nearby blocks * 1.1, and the getBrightness * sun brightness.
+            * getBrightness calculates how much the entity receives light from the sky. Then we multiply because the more day it is, the more we want to actually "enforce it".
+            * It blends pretty well.
+            *  */
+            mixAlpha = 1 - Util.getLightSourceBrightness(parEntity.worldObj, x, y, z) * 1.1F - (parEntity.getBrightness(1.0F) * Util.getSunBrightness(parEntity.worldObj));
+        }
 
         if (mixAlpha <= 0) {
             return;
@@ -262,9 +298,9 @@ public class ModelEyes extends ModelBase {
         if (entity.getBlinkingState()) {
             int half_blink = Config.blinkDuration / 2;
             if (entity.getBlinkProgress() < half_blink) {
-                hoff = Util.floor((entity.getBlinkProgress() + partialTicks) * 4f / half_blink) * th;
+                hoff = MathHelper.floor_float((entity.getBlinkProgress() + partialTicks) * 4f / half_blink) * th;
             } else {
-                hoff = Math.max(0, 8 - Util.floor((entity.getBlinkProgress() + partialTicks) * 4f / half_blink)) * th;
+                hoff = Math.max(0, 8 - MathHelper.floor_float((entity.getBlinkProgress() + partialTicks) * 4f / half_blink)) * th;
             }
         }
         return hoff;

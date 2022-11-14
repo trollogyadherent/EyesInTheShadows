@@ -4,7 +4,12 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import de.matthiasmann.twl.utils.PNGDecoder;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenDesert;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
 import trollogyadherent.eyesintheshadows.Tags;
 import trollogyadherent.eyesintheshadows.spawnegg.EyesMonsterPlacer;
@@ -106,18 +111,45 @@ public class Util {
         GameRegistry.registerItem(itemSpawnEgg, "spawnEgg" + name);
     }
 
-    /* Taken from MC 1.19 */
-    public static int floor(float f) {
-        int i = (int)f;
-        return f < (float)i ? i - 1 : i;
+    public static boolean isSunVisible(World world, int x, int y, int z)
+    {
+        return (world.isDaytime()) && (!world.provider.hasNoSky) && (world.canBlockSeeTheSky(x, y, z)) && (((world.getWorldChunkManager().getBiomeGenAt(x, z) instanceof BiomeGenDesert)) || ((!world.isRaining()) && (!world.isThundering())));
     }
 
-    /* Taken from MC 1.19 */
-    public static float clamp(float p_14037_, float p_14038_, float p_14039_) {
-        if (p_14037_ < p_14038_) {
-            return p_14038_;
-        } else {
-            return p_14037_ > p_14039_ ? p_14039_ : p_14037_;
+    public static double getAverageLightLevel(Entity entity) {
+        int coreX = MathHelper.floor_double(entity.posX);
+        int coreY = MathHelper.floor_double(entity.posY);
+        int coreZ = MathHelper.floor_double(entity.posZ);
+        int totalLight = 0;
+        int totalBlocks = 0;
+        for (int x = coreX - 1; x <= coreX + 1; x++) {
+            for (int y = coreY - 0; y <= coreY + 1; y++) {
+                for (int z = coreZ - 1; z <= coreZ + 1; z++) {
+                    if (!entity.worldObj.getBlock(x, y, z).getUseNeighborBrightness()) {
+                        totalLight += entity.worldObj.getBlockLightValue_do(x, y, z, true);
+                        totalBlocks++;
+                        //if (debugGlass)
+                        //    w.func_147449_b(x, y, z, Blocks.field_150359_w);
+                    }
+                }
+            }
         }
+        if (totalBlocks == 0)
+            totalBlocks = 1;
+        double avgLight = Math.floor((totalLight / totalBlocks));
+        return avgLight;
+    }
+
+    public static float getSunBrightness(World world) {
+        if (world.provider.hasNoSky) {
+            return 0.F;
+        }
+        //System.out.println("sunBrightness: " + world.provider.getSunBrightness(1.0F));
+        //System.out.println("starBrightness: " + world.provider.getStarBrightness(1.0F));
+        return world.provider.getSunBrightness(1.0F);
+    }
+
+    public static float getLightSourceBrightness(World world, int x, int y, int z) {
+        return world.getSavedLightValue(EnumSkyBlock.Block, x, y, z) / 15.F;
     }
 }
