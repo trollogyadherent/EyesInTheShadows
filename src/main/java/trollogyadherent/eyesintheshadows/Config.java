@@ -23,6 +23,7 @@ public class Config {
         public static final int blinkDuration = 5;
         public static final float blinkChance = 0.02F;
         public static final int health = 1;
+        public static final float scaleFactor = 0.75F;
     }
 
     public static class Categories {
@@ -46,6 +47,7 @@ public class Config {
     public static int blinkDuration = Defaults.blinkDuration;
     public static float blinkChance = Defaults.blinkChance;
     public static int health = Defaults.health;
+    public static float scaleFactor = Defaults.scaleFactor;
 
 
     public static void synchronizeConfigurationClient(File configFile, boolean force, boolean load) {
@@ -101,5 +103,8 @@ public class Config {
 
         Property healthProperty = config.get(Categories.misc, "health", Defaults.health, "Eye health", 1, Integer.MAX_VALUE);
         health = healthProperty.getInt();
+
+        Property scaleFactorProperty = config.get(Categories.misc, "scale_factor", Defaults.scaleFactor, "Eye size scale factor", 0.01F, Float.MAX_VALUE);
+        scaleFactor = (float) scaleFactorProperty.getDouble();
     }
 }

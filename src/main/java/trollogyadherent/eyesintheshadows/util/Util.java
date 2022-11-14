@@ -111,35 +111,6 @@ public class Util {
         GameRegistry.registerItem(itemSpawnEgg, "spawnEgg" + name);
     }
 
-    public static boolean isSunVisible(World world, int x, int y, int z)
-    {
-        return (world.isDaytime()) && (!world.provider.hasNoSky) && (world.canBlockSeeTheSky(x, y, z)) && (((world.getWorldChunkManager().getBiomeGenAt(x, z) instanceof BiomeGenDesert)) || ((!world.isRaining()) && (!world.isThundering())));
-    }
-
-    public static double getAverageLightLevel(Entity entity) {
-        int coreX = MathHelper.floor_double(entity.posX);
-        int coreY = MathHelper.floor_double(entity.posY);
-        int coreZ = MathHelper.floor_double(entity.posZ);
-        int totalLight = 0;
-        int totalBlocks = 0;
-        for (int x = coreX - 1; x <= coreX + 1; x++) {
-            for (int y = coreY - 0; y <= coreY + 1; y++) {
-                for (int z = coreZ - 1; z <= coreZ + 1; z++) {
-                    if (!entity.worldObj.getBlock(x, y, z).getUseNeighborBrightness()) {
-                        totalLight += entity.worldObj.getBlockLightValue_do(x, y, z, true);
-                        totalBlocks++;
-                        //if (debugGlass)
-                        //    w.func_147449_b(x, y, z, Blocks.field_150359_w);
-                    }
-                }
-            }
-        }
-        if (totalBlocks == 0)
-            totalBlocks = 1;
-        double avgLight = Math.floor((totalLight / totalBlocks));
-        return avgLight;
-    }
-
     public static float getSunBrightness(World world) {
         if (world.provider.hasNoSky) {
             return 0.F;
@@ -151,5 +122,27 @@ public class Util {
 
     public static float getLightSourceBrightness(World world, int x, int y, int z) {
         return world.getSavedLightValue(EnumSkyBlock.Block, x, y, z) / 15.F;
+    }
+
+    /* Calculating how transparent the eyes should be, from 0 to 1 */
+    public static float getEyeRenderingAlpha(Entity entity) {
+        float mixAlpha = 1;
+        int x = MathHelper.floor_double(entity.posX);
+        int y = MathHelper.floor_double(entity.posY);
+        int z = MathHelper.floor_double(entity.posZ);
+
+        /* A value of 15 here means the block is exposed to the sky */
+        if (entity.worldObj.getBlockLightValue(x, y, z) == 15) {
+            /* If the entity is exposed to the sky, we subtract the sun brightness and the brightness from torches/other light emitting blocks */
+            mixAlpha = 1 - Util.getSunBrightness(entity.worldObj) - Util.getLightSourceBrightness(entity.worldObj, x, y, z);
+        } else {
+            /* Otherwise, we subtract the light emitted by nearby blocks * 1.1, and the getBrightness * sun brightness.
+             * getBrightness calculates how much the entity receives light from the sky. Then we multiply because the more day it is, the more we want to actually "enforce it".
+             * It blends pretty well.
+             *  */
+            mixAlpha = 1 - Util.getLightSourceBrightness(entity.worldObj, x, y, z) * 1.1F - (entity.getBrightness(1.0F) * Util.getSunBrightness(entity.worldObj));
+        }
+
+        return Math.max(mixAlpha, 0);
     }
 }

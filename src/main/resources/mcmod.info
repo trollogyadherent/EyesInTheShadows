@@ -7,8 +7,8 @@
       "mcversion": "${minecraftVersion}",
       "url": "",
       "updateUrl": "",
-      "authorList": ["trollogyadherent"],
-      "credits": "gigaherz",
+      "authorList": ["gigaherz, trollogyadherent"],
+      "credits": "",
       "logoFile": "assets/${modId}/logo.png",
       "screenshots": [],
       "dependencies": []

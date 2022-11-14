@@ -1,6 +1,5 @@
 package trollogyadherent.eyesintheshadows.client;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
@@ -10,15 +9,11 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.EnumSkyBlock;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import trollogyadherent.eyesintheshadows.Config;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
 import trollogyadherent.eyesintheshadows.entity.entities.EntityEyes;
 import trollogyadherent.eyesintheshadows.util.Util;
-
-import java.lang.reflect.InvocationTargetException;
 
 public class ModelEyes extends ModelBase {
     public ModelRenderer head;
@@ -68,35 +63,7 @@ public class ModelEyes extends ModelBase {
 
         setRotationAngles(parTime, parSwingSuppress, par4, parHeadAngleY, parHeadAngleX, par7, parEntity);
 
-        /*int xmod = 1;
-        int ymod = 0;
-        int zmod = 0;
-        int blockLight = Minecraft.getMinecraft().theWorld.getFullBlockLightValue((int) parEntity.posX + xmod, (int) parEntity.posY + ymod, (int) parEntity.posZ + zmod);
-        Block b = Minecraft.getMinecraft().theWorld.getBlock((int) parEntity.posX + xmod, (int) parEntity.posY + ymod, (int) parEntity.posZ + zmod);
-        blockLight = b.getLightValue(); */
-
-
-        /*int coreX = MathHelper.floor_double(parEntity.posX);
-        int coreY = MathHelper.floor_double(parEntity.posY);
-        int coreZ = MathHelper.floor_double(parEntity.posZ);
-        int totalLight = 0;
-        int totalBlocks = 0;
-        for (int x = coreX - 5; x <= coreX + 5; x ++)
-        {
-            for (int y = coreY - 5; y <= coreY + 5; y ++)
-            {
-                for (int z = coreZ - 5; z <= coreZ + 5; z ++)
-                {
-                    if (!Minecraft.getMinecraft().theWorld.getBlock(x, y, z).getUseNeighborBrightness())
-                    {
-                        totalLight += Minecraft.getMinecraft().theWorld.getFullBlockLightValue(x, y, z);
-                        totalBlocks += 1;
-                    }
-                }
-            }
-        }
-        int blockLight = totalLight / totalBlocks;*/
-
+        /*
         int x = MathHelper.floor_double(parEntity.posX) + EyesInTheShadows.varInstanceClient.xmod;
         int y = MathHelper.floor_double(parEntity.posY) + EyesInTheShadows.varInstanceClient.ymod;
         int z = MathHelper.floor_double(parEntity.posZ) + EyesInTheShadows.varInstanceClient.zmod;
@@ -109,7 +76,7 @@ public class ModelEyes extends ModelBase {
             Block b = parEntity.worldObj.getBlock(x, y, z);
             EyesInTheShadows.debug("Block name: " + b.getLocalizedName() + ", x: " + x + ", y: " + y + ", z :" + z);
             EyesInTheShadows.debug("Block lightvalue: " + b.getLightValue());
-            /* seems like the winner */ EyesInTheShadows.debug("world.getBlockLightValue: " + parEntity.worldObj.getBlockLightValue(x, y, z));
+            // seems like the winner  EyesInTheShadows.debug("world.getBlockLightValue: " + parEntity.worldObj.getBlockLightValue(x, y, z));
             EyesInTheShadows.debug("world.getBlockLightValue_do: " + parEntity.worldObj.getBlockLightValue_do(x, y, z, false));
             EyesInTheShadows.debug("world.getFullBlockLightValue: " + parEntity.worldObj.getFullBlockLightValue(x, y, z));
             EyesInTheShadows.debug("world.getLightBrightness: " + parEntity.worldObj.getLightBrightness(x, y, z));
@@ -138,43 +105,15 @@ public class ModelEyes extends ModelBase {
             EyesInTheShadows.debug("===================model==================");
         }
 
-        //int blockLight = parEntity.worldObj.getBlockLightValue(x, y, z);
-        //if (parEntity.worldObj.provider.sky)
+         */
 
-        //float mixAlpha = Util.clamp((8 - blockLight) / 8.0f, 0, 1);
-        //System.out.println(mixAlpha);
-
-        //float mixAlpha = 1F - parEntity.getBrightness(0.F);//1;
-
-        /*if (Util.isSunVisible(parEntity.worldObj, x, y, z)) {
-            mixAlpha = 0;
-        }*/
-
-        //7boolean isday = parEntity.worldObj.isDaytime();
-        //int saved_lv = parEntity.worldObj.getSavedLightValue(EnumSkyBlock.Block, x, y, z);
-
-        //if (!parEntity.worldObj.provider.hasNoSky && !isday && saved_lv < 9) {
-        //    mixAlpha = 1;
-        //}
 
         /* A value from 0 to 1 telling how transparent the eyes will be (the more light there is, the more transparent
             the eyes should be
         ) */
-        float mixAlpha;
+        float mixAlpha = Util.getEyeRenderingAlpha(parEntity);
 
-        /* A value of 15 here means the block is exposed to the sky */
-        if (parEntity.worldObj.getBlockLightValue(x, y, z) == 15) {
-            /* If the entity is exposed to the sky, we subtract the sun brightness and the brightness from torches/other light emitting blocks */
-            mixAlpha = 1 - Util.getSunBrightness(parEntity.worldObj) - Util.getLightSourceBrightness(parEntity.worldObj, x, y, z);
-        } else {
-            /* Otherwise, we subtract the light emitted by nearby blocks * 1.1, and the getBrightness * sun brightness.
-            * getBrightness calculates how much the entity receives light from the sky. Then we multiply because the more day it is, the more we want to actually "enforce it".
-            * It blends pretty well.
-            *  */
-            mixAlpha = 1 - Util.getLightSourceBrightness(parEntity.worldObj, x, y, z) * 1.1F - (parEntity.getBrightness(1.0F) * Util.getSunBrightness(parEntity.worldObj));
-        }
-
-        if (mixAlpha <= 0) {
+        if (mixAlpha == 0) {
             return;
         }
 
@@ -183,7 +122,9 @@ public class ModelEyes extends ModelBase {
         ///GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 
 
-        GL11.glScalef(parEntity.getScaleFactor(), parEntity.getScaleFactor(), parEntity.getScaleFactor());
+        GL11.glScalef(parEntity.getScaleFactor() * Config.scaleFactor,
+                parEntity.getScaleFactor() * Config.scaleFactor,
+                parEntity.getScaleFactor() * Config.scaleFactor);
         GL11.glTranslated(0, parEntity.getEyeHeight() - 0.75F, 0);
 
         float viewerYaw = RenderManager.instance.playerViewY;
