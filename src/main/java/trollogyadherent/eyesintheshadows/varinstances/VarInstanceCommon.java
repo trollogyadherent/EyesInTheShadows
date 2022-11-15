@@ -3,10 +3,13 @@ package trollogyadherent.eyesintheshadows.varinstances;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import trollogyadherent.eyesintheshadows.Tags;
+import trollogyadherent.eyesintheshadows.util.XSTR;
 
 import java.lang.reflect.Field;
 
 public class VarInstanceCommon {
+    /* A faster random. http://demesos.blogspot.com/2011/09/pseudo-random-number-generators.html */
+    public XSTR rand = new XSTR();
     public String disappearSound = Tags.MODID + ":" + "mob.eyes.disappear";
     public String laughSound = Tags.MODID + ":" + "mob.eyes.laugh";
     public String jumpScareSound = Tags.MODID + ":" + "mob.eyes.jumpscare";

@@ -16,8 +16,13 @@ public class Config {
         public static final boolean debugMode = false;
         public static final boolean jumpscare = true;
         public static final boolean eyesCanAttackWhileLit = false;
+        public static final double speedNoAggro = 0.1;
+        public static final double speedFullAggro = 0.5;
 
-
+        /* eye aggression */
+        public static final boolean enableEyeAggressionEscalation = true;
+        public static final boolean eyeAggressionDependsOnLocalDifficulty = true;
+        public static final boolean eyeAggressionDependsOnLightLevel = true;
 
         /* misc */
         public static final float aggroEscalationPerTick = 1f / (20 * 60 * 5);
@@ -50,7 +55,13 @@ public class Config {
     public static boolean debugMode = Defaults.debugMode;
     public static boolean jumpscare = Defaults.jumpscare;
     public static boolean eyesCanAttackWhileLit = Defaults.eyesCanAttackWhileLit;
+    public static double speedNoAggro = Defaults.speedNoAggro;
+    public static double speedFullAggro = Defaults.speedFullAggro;
 
+    /* eye aggression */
+    public static boolean enableEyeAggressionEscalation = Defaults.enableEyeAggressionEscalation;
+    public static boolean eyeAggressionDependsOnLocalDifficulty = Defaults.eyeAggressionDependsOnLocalDifficulty;
+    public static boolean eyeAggressionDependsOnLightLevel = Defaults.eyeAggressionDependsOnLightLevel;
 
     /* misc */
     public static float aggroEscalationPerTick = Defaults.aggroEscalationPerTick;
@@ -119,6 +130,21 @@ public class Config {
         Property eyesCanAttackWhileLitProperty = config.get(Categories.general, "eyesCanAttackWhileLit", Defaults.eyesCanAttackWhileLit, "While set to true, the eyes entity will ignore the artificial light level and will jumpscare even if it's lit. Daylight will still disable it's AI.");
         eyesCanAttackWhileLit = eyesCanAttackWhileLitProperty.getBoolean();
 
+        Property  speedNoAggroProperty = config.get(Categories.general, "speedNoAggro", Defaults.speedNoAggro, "Eyes speed at minimal aggro.", 0, Double.MAX_VALUE);
+        speedNoAggro = speedNoAggroProperty.getDouble();
+
+        Property  speedFullAggroProperty = config.get(Categories.general, "speedFullAggro", Defaults.speedFullAggro, "Eyes speed at full aggro.", 0, Double.MAX_VALUE);
+        speedFullAggro = speedFullAggroProperty.getDouble();
+
+        /* eye aggro */
+        Property enableEyeAggressionEscalationProperty = config.get(Categories.eye_aggression, "enableEyeAggressionEscalation", Defaults.enableEyeAggressionEscalation, "While set to true, the eyes entities will progressively get more bold, and move faster, the longer they live.");
+        enableEyeAggressionEscalation = enableEyeAggressionEscalationProperty.getBoolean();
+
+        Property eyeAggressionDependsOnLocalDifficultyProperty = config.get(Categories.eye_aggression, "eyeAggressionDependsOnLocalDifficulty", Defaults.eyeAggressionDependsOnLocalDifficulty, "While set to true, the eyes entities will spawn with higher aggression levels in higher local difficulties.");
+        eyeAggressionDependsOnLocalDifficulty = eyeAggressionDependsOnLocalDifficultyProperty.getBoolean();
+
+        Property eyeAggressionDependsOnLightLevelProperty = config.get(Categories.eye_aggression, "eyeAggressionDependsOnLightLevel", Defaults.eyeAggressionDependsOnLightLevel, "While set to true, the eyes entities will have higher aggression values on lower light levels.");
+        eyeAggressionDependsOnLightLevel = eyeAggressionDependsOnLightLevelProperty.getBoolean();
 
         /* misc */
         Property blinkDurationProperty = config.get(Categories.misc, "blinkDuration", Defaults.blinkDuration, "Eye blink duration. Set to -1 to disable blinking", -1, Integer.MAX_VALUE);

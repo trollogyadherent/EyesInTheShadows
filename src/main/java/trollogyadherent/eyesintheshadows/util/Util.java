@@ -171,4 +171,27 @@ public class Util {
 
         return Math.max(mixAlpha, 0);
     }
+
+    /* from Minecraft 1.19 net.minecraft.util.Mth */
+    public static double lerp(double p_14140_, double p_14141_, double p_14142_) {
+        return p_14141_ + p_14140_ * (p_14142_ - p_14141_);
+    }
+
+    /* from Minecraft 1.19 net.minecraft.util.Mth */
+    public static double clampedLerp(double p_14086_, double p_14087_, double p_14088_) {
+        if (p_14088_ < 0.0D) {
+            return p_14086_;
+        } else {
+            return p_14088_ > 1.0D ? p_14087_ : lerp(p_14088_, p_14086_, p_14087_);
+        }
+    }
+
+    /* from Minecraft 1.19 net.minecraft.util.Mth */
+    public static float clampedLerp(float p_144921_, float p_144922_, float p_144923_) {
+        if (p_144923_ < 0.0F) {
+            return p_144921_;
+        } else {
+            return p_144923_ > 1.0F ? p_144922_ : (float) lerp(p_144923_, p_144921_, p_144922_);
+        }
+    }
 }

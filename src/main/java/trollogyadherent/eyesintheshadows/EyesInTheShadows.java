@@ -25,9 +25,6 @@ public class EyesInTheShadows {
     public static final int maxPngDimension = 2500;
     public static File confFile;
 
-    /* A faster random. http://demesos.blogspot.com/2011/09/pseudo-random-number-generators.html */
-    public static XSTR rand = new XSTR();
-
     @SidedProxy(clientSide= Tags.GROUPNAME + ".ClientProxy", serverSide=Tags.GROUPNAME + ".CommonProxy")
     public static CommonProxy proxy;
 

@@ -1,5 +1,16 @@
 # Eyes in the Shadows mod for Minecraft Forge 1.7.10
 
+The barrier between the world of the living and the world of the dead is already thin in the Minecraft lands.
+The days as Halloween draws closer, it weakens down even further.
+
+![eyes](eyes.gif)
+
+If you see the eyes, don't turn away from them.
+<br>
+<br>
+Or do, at your own risk.
+<br>
+You have been warned.
 
 ## FAQ
 ### What it do?
@@ -11,6 +22,7 @@ Please DO NOT report any issues or send any requests concerning this port to gig
 * Most eye properties are configurable.
 * Configurable Eyes attacking tamed Wolves, and vice versa.
 * Configurable Eyes fleeing Ocelots and Cats.
+* Implemented configurable aggression changing based on light level.
 
 ### Will you port it to [insert abandonware version]?
 It's free real estate. Do it (for free).

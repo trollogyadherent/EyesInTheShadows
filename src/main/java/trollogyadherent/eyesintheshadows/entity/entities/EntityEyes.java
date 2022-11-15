@@ -11,8 +11,10 @@ import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import trollogyadherent.eyesintheshadows.Config;
@@ -33,16 +35,15 @@ import java.util.List;
 public class EntityEyes extends EntityMob implements IModEntity {
     private NBTTagCompound syncDataCompound = new NBTTagCompound();
 
-    public boolean blinkingState;
-    public int blinkProgress;
-
-    boolean has_attacked = false;
-
     public EntityEyes(World world) {
         super(world);
         //setSize(1.0F, 0.25F);
         this.setSize(1.0F, 2.0F);
         this.stepHeight = 1.0F;
+        /* Setting aggro level depending on difficulty, if enabled in config */
+        if (Config.eyeAggressionDependsOnLocalDifficulty) {
+            setAggroLevel(EyesInTheShadows.varInstanceCommon.rand.nextFloat() * worldObj.difficultySetting.getDifficultyId(), 1);
+        }
         initSyncDataCompound();
         setupAI();
     }
@@ -71,8 +72,13 @@ public class EntityEyes extends EntityMob implements IModEntity {
             return false;
         }
 
-        // TODO: check if has blindness
-        //target.getActivePotionEffect()
+        if (target.getActivePotionEffect(Potion.blindness) != null) {
+            return false;
+        }
+
+        if (target.getActivePotionEffect(Potion.invisibility) != null) {
+            return true;
+        }
 
         Vector3d playerPos = new Vector3d(target.posX, target.posY, target.posZ);
         Vec3 lookVec = target.getLookVec();
@@ -150,12 +156,14 @@ public class EntityEyes extends EntityMob implements IModEntity {
     @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
-        setEyeBrightness(Util.getEyeRenderingAlpha(this, Config.eyesCanAttackWhileLit));
+        float alpha = Util.getEyeRenderingAlpha(this, Config.eyesCanAttackWhileLit);
+
+        setEyeBrightness(alpha);
         //EyesInTheShadows.debug("Looking in my dir: " + isPlayerLookingInMyGeneralDirection(this));
 
         //if(worldObj != null && worldObj.isRemote) {
             if (!getBlinkingState()) {
-                if (EyesInTheShadows.rand.nextFloat() < Config.blinkChance / 10) {
+                if (EyesInTheShadows.varInstanceCommon.rand.nextFloat() < Config.blinkChance / 10) {
                     setBlinkingState(true);
                     setBlinkProgress(0);
                 }
@@ -166,7 +174,7 @@ public class EntityEyes extends EntityMob implements IModEntity {
                 }
             }
         //}
-        if(worldObj != null) {
+        if(worldObj != null && alpha > 0) {
             Vec3 eyePosEyes = Vec3.createVectorHelper(posX, posY + 1, posZ);//getPosEyes(this);
             if (getBrightness() > 0) {
                 float maxWatchDistance = Config.watchDistance;
@@ -197,6 +205,14 @@ public class EntityEyes extends EntityMob implements IModEntity {
                     disappear(true);
                 }
             }
+        }
+
+        if (Config.enableEyeAggressionEscalation && alpha > 0)
+        {
+            setAggroLevel(getAggroLevel() + Config.aggroEscalationPerTick, 1);
+        }
+
+        if (Config.eyeAggressionDependsOnLightLevel) {
 
         }
     }
@@ -311,6 +327,15 @@ public class EntityEyes extends EntityMob implements IModEntity {
         return syncDataCompound.getFloat("brightness");
     }
 
+    public void setAggroLevel(float aggro, float limit) {
+        syncDataCompound.setFloat("aggro", MathHelper.clamp_float(aggro, 0, limit));
+        sendEntitySyncPacket();
+    }
+
+    public float getAggroLevel() {
+        return syncDataCompound.getFloat("aggro");
+    }
+
     @Override
     public void sendEntitySyncPacket() {
         PacketUtil.sendEntitySyncPacketToClient(this);
@@ -335,9 +360,22 @@ public class EntityEyes extends EntityMob implements IModEntity {
         syncDataCompound.setFloat("scaleFactor", 1.0F);
     }
 
+    private double getSpeedFromAggro()
+    {
+        if (Util.getEyeRenderingAlpha(this, Config.eyesCanAttackWhileLit) <= 0) {
+            return 0;
+        }
+        return Util.clampedLerp(getAggroLevel(), Config.speedNoAggro, Config.speedFullAggro);
+    }
+
     @Override
     protected String getDeathSound() {
         return EyesInTheShadows.varInstanceCommon.disappearSound;
+    }
+
+    @Override
+    protected String getLivingSound() {
+        return EyesInTheShadows.varInstanceCommon.laughSound;
     }
 
     @Override
@@ -392,5 +430,16 @@ public class EntityEyes extends EntityMob implements IModEntity {
         //return this.height * EyesInTheShadows.varInstanceClient.hmod;//0.03F;
         return this.height * 0.2F;//EyesInTheShadows.varInstanceClient.hmod;
     }
+
+    @Override
+    public boolean isEntityUndead() {
+        return true;
+    }
+
+    @Override
+    public boolean canBeCollidedWith() {
+        return false;
+    }
+
 
 }
