@@ -13,7 +13,7 @@ Or do, at your own risk.
 You have been warned.
 
 ## FAQ
-### What it do?
+### What is this?
 It is a backport of the [Eyes in the Darkness](https://github.com/gigaherz/EyesInTheDarkness/blob/master/LICENSE.txt) mod, originally created by [gigaherz](https://github.com/gigaherz).
 [Support him on Patreon](https://www.patreon.com/gigaherz).
 Please DO NOT report any issues or send any requests concerning this port to gigaherz, open an issue here instead.
@@ -40,3 +40,5 @@ It's free real estate. Do it (for free).
 
 ## Credits
 * [FalsePattern](https://github.com/FalsePattern), [SinTh0r4s](https://github.com/SinTh0r4s), [basdxz](https://github.com/basdxz), and [TheElan](https://github.com/TheElan) for their [ExampleMod 1.7.10](https://github.com/FalsePattern/ExampleMod1.7.10) and the included gradle buildscript.
+* [Jabelar](http://jabelarminecraft.blogspot.com/), for his amazing tutorials and mob related code.
+* [TheGreyGhost](http://greyminecraftcoder.blogspot.com/p/list-of-topics.html), for superb tutorials as well.
