@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.*;
 import org.apache.logging.log4j.Logger;
 import trollogyadherent.eyesintheshadows.util.XSTR;
 import trollogyadherent.eyesintheshadows.varinstances.VarInstanceClient;
+import trollogyadherent.eyesintheshadows.varinstances.VarInstanceCommon;
 import trollogyadherent.eyesintheshadows.varinstances.VarInstanceServer;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class EyesInTheShadows {
     private static Logger LOG;
     public static VarInstanceClient varInstanceClient;
     public static VarInstanceServer varInstanceServer;
+    public static VarInstanceCommon varInstanceCommon;
     private static boolean DEBUG_MODE;
     public static String rootPath = Tags.MODID;
     public static final int maxPngDimension = 2500;

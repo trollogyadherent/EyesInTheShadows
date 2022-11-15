@@ -5,7 +5,7 @@
       "description": "Backport of the Eyes in the Darkness mod.",
       "version": "${modVersion}",
       "mcversion": "${minecraftVersion}",
-      "url": "",
+      "url": "https://github.com/trollogyadherent/EyesInTheShadows",
       "updateUrl": "",
       "authorList": ["gigaherz, trollogyadherent"],
       "credits": "",

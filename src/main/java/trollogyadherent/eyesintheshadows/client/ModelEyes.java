@@ -111,7 +111,7 @@ public class ModelEyes extends ModelBase {
         /* A value from 0 to 1 telling how transparent the eyes will be (the more light there is, the more transparent
             the eyes should be
         ) */
-        float mixAlpha = Util.getEyeRenderingAlpha(parEntity);
+        float mixAlpha = Util.getEyeRenderingAlpha(parEntity, Config.eyesCanAttackWhileLit);
 
         if (mixAlpha == 0) {
             return;

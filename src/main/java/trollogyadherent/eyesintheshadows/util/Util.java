@@ -9,7 +9,6 @@ import net.minecraft.item.Item;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenDesert;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
 import trollogyadherent.eyesintheshadows.Tags;
 import trollogyadherent.eyesintheshadows.spawnegg.EyesMonsterPlacer;
@@ -111,13 +110,36 @@ public class Util {
         GameRegistry.registerItem(itemSpawnEgg, "spawnEgg" + name);
     }
 
+    public static float getSunBrightnessBody(float angle, World w)
+    {
+        float f1 = w.getCelestialAngle(angle);
+        float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.2F);
+
+        if (f2 < 0.0F)
+        {
+            f2 = 0.0F;
+        }
+
+        if (f2 > 1.0F)
+        {
+            f2 = 1.0F;
+        }
+
+        f2 = 1.0F - f2;
+        f2 = (float)((double)f2 * (1.0D - (double)(w.getRainStrength(angle) * 5.0F) / 16.0D));
+        f2 = (float)((double)f2 * (1.0D - (double)(w.getWeightedThunderStrength(angle) * 5.0F) / 16.0D));
+        return f2 * 0.8F + 0.2F;
+    }
+
     public static float getSunBrightness(World world) {
         if (world.provider.hasNoSky) {
             return 0.F;
         }
         //System.out.println("sunBrightness: " + world.provider.getSunBrightness(1.0F));
         //System.out.println("starBrightness: " + world.provider.getStarBrightness(1.0F));
-        return world.provider.getSunBrightness(1.0F);
+
+        //return world.provider.getSunBrightness(1.0F);
+        return getSunBrightnessBody(1.0F, world);
     }
 
     public static float getLightSourceBrightness(World world, int x, int y, int z) {
@@ -125,22 +147,26 @@ public class Util {
     }
 
     /* Calculating how transparent the eyes should be, from 0 to 1 */
-    public static float getEyeRenderingAlpha(Entity entity) {
-        float mixAlpha = 1;
+    public static float getEyeRenderingAlpha(Entity entity, boolean ignoreArtificialLight) {
+        float mixAlpha;
         int x = MathHelper.floor_double(entity.posX);
         int y = MathHelper.floor_double(entity.posY);
         int z = MathHelper.floor_double(entity.posZ);
+        float artificialLight = 0;
+        if (!ignoreArtificialLight) {
+            artificialLight = Util.getLightSourceBrightness(entity.worldObj, x, y, z);
+        }
 
         /* A value of 15 here means the block is exposed to the sky */
         if (entity.worldObj.getBlockLightValue(x, y, z) == 15) {
             /* If the entity is exposed to the sky, we subtract the sun brightness and the brightness from torches/other light emitting blocks */
-            mixAlpha = 1 - Util.getSunBrightness(entity.worldObj) - Util.getLightSourceBrightness(entity.worldObj, x, y, z);
+            mixAlpha = 1 - Util.getSunBrightness(entity.worldObj) - artificialLight;
         } else {
             /* Otherwise, we subtract the light emitted by nearby blocks * 1.1, and the getBrightness * sun brightness.
              * getBrightness calculates how much the entity receives light from the sky. Then we multiply because the more day it is, the more we want to actually "enforce it".
              * It blends pretty well.
              *  */
-            mixAlpha = 1 - Util.getLightSourceBrightness(entity.worldObj, x, y, z) * 1.1F - (entity.getBrightness(1.0F) * Util.getSunBrightness(entity.worldObj));
+            mixAlpha = 1 - artificialLight * 1.1F - (entity.getBrightness(1.0F) * Util.getSunBrightness(entity.worldObj));
         }
 
         return Math.max(mixAlpha, 0);

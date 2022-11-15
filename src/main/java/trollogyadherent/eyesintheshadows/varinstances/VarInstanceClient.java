@@ -11,10 +11,6 @@ public class VarInstanceClient {
     public ResourceLocation eyes2Texture = new ResourceLocation(Tags.MODID+":textures/entity/eyes2.png");
     public ResourceLocation creepyTexture = new ResourceLocation(Tags.MODID+":textures/creepy.png");
 
-    public String disappearSound = Tags.MODID + ":" + "mob.eyes.disappear";
-    public String laughSound = Tags.MODID + ":" + "mob.eyes.laugh";
-    public String jumpScareSound = Tags.MODID + ":" + "mob.eyes.jumpscare";
-
     //public Method computeLightValueMethod = ReflectionHelper.findMethod(net.minecraft.world.World.class, "")
 
     public int xmod = 0;

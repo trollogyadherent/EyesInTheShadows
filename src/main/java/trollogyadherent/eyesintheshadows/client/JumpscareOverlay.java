@@ -56,7 +56,7 @@ public class JumpscareOverlay extends Gui
     public void show(double ex, double ey, double ez)
     {
         visible = true;
-        mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation(EyesInTheShadows.varInstanceClient.jumpScareSound), 1.0F));
+        mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation(EyesInTheShadows.varInstanceCommon.jumpScareSound), 1.0F));
     }
 
     @SubscribeEvent

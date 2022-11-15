@@ -1,4 +1,4 @@
-package trollogyadherent.eyesintheshadows.client;
+package trollogyadherent.eyesintheshadows.event;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -8,7 +8,7 @@ import net.minecraft.world.EnumSkyBlock;
 import org.lwjgl.input.Keyboard;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
 
-public class EventHandler {
+public class ClientEventHandler {
     int lastPressedKey;
 
     @SuppressWarnings("unused")

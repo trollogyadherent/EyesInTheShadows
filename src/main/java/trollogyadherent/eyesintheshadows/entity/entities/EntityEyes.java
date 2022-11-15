@@ -1,10 +1,7 @@
 package trollogyadherent.eyesintheshadows.entity.entities;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.relauncher.ReflectionHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
@@ -14,20 +11,23 @@ import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import trollogyadherent.eyesintheshadows.Config;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
-import trollogyadherent.eyesintheshadows.Tags;
+import trollogyadherent.eyesintheshadows.aitasks.AvoidOcelots;
+import trollogyadherent.eyesintheshadows.aitasks.CreepTowardPlayer;
+import trollogyadherent.eyesintheshadows.aitasks.EyesWander;
+import trollogyadherent.eyesintheshadows.aitasks.TargetTamedWolves;
 import trollogyadherent.eyesintheshadows.entity.IModEntity;
 import trollogyadherent.eyesintheshadows.packet.PacketHandler;
 import trollogyadherent.eyesintheshadows.packet.PacketUtil;
 import trollogyadherent.eyesintheshadows.packet.packets.InitiateJumpscarePacket;
+import trollogyadherent.eyesintheshadows.util.Util;
 
 import javax.vecmath.Vector3d;
-import java.lang.reflect.Method;
 import java.util.List;
 
 public class EntityEyes extends EntityMob implements IModEntity {
@@ -35,12 +35,11 @@ public class EntityEyes extends EntityMob implements IModEntity {
 
     public boolean blinkingState;
     public int blinkProgress;
-    public Method computeLightValueMethod;
+
+    boolean has_attacked = false;
 
     public EntityEyes(World world) {
         super(world);
-        /* int computeLightValue(int p_98179_1_, int p_98179_2_, int p_98179_3_, EnumSkyBlock p_98179_4_) */
-        computeLightValueMethod = ReflectionHelper.findMethod(net.minecraft.world.World.class, world, new String[]{"computeLightValue", "func_98179_a"}, int.class, int.class, int.class, EnumSkyBlock.class);
         //setSize(1.0F, 0.25F);
         this.setSize(1.0F, 2.0F);
         this.stepHeight = 1.0F;
@@ -54,58 +53,27 @@ public class EntityEyes extends EntityMob implements IModEntity {
         this.experienceValue = 5;
     }
 
-    private static class CreepTowardPlayer extends EntityAIAttackOnCollide {
-        private final EntityEyes eyes;
-
-        public CreepTowardPlayer(EntityCreature creature, double p_i1636_2_, boolean p_i1636_4_) {
-            super(creature, p_i1636_2_, p_i1636_4_);
-            eyes = (EntityEyes) creature;
-        }
-
-        @Override
-        public boolean continueExecuting()
-        {
-            if (isPlayerLookingInMyGeneralDirection(eyes)) {
-                return false;
-            }
-            return super.continueExecuting();
-        }
-
-        @Override
-        public boolean shouldExecute()
-        {
-            if (isPlayerLookingInMyGeneralDirection(eyes)) {
-                return false;
-            }
-            return super.shouldExecute();
-        }
+    @Override
+    public AxisAlignedBB getBoundingBox()
+    {
+        return this.boundingBox;
     }
 
-    static boolean isPlayerLookingInMyGeneralDirection(EntityEyes eyes)
+    public boolean isPlayerLookingInMyGeneralDirection()
     {
-        Vec3 eyesPos = getPosEyes(eyes);
-        float blockLight = 0;
-            /* TODO
-            if (ConfigData.EyesCanAttackWhileLit)
-            {
-                if (!eyes.worldObj.provider.hasNoSky)
-                {
-                    float skyLight = eyes.worldObj.getLightFor(EnumSkyBlock.SKY, eyesPos) - (1 - eyes.world.provider.getSunBrightnessFactor(1.0f)) * 11;
-                    blockLight = Math.max(blockLight, skyLight);
-                }
-            } else {
-                blockLight = eyes.world.getLight(eyesPos, false);
-            }
-            if (blockLight >= 8) {
-                return true;
-            }
-            */
+        if (this.getBrightness() <= 0) {
+            return false;
+        }
 
-        Vector3d selfPos = new Vector3d(eyes.posX, eyes.posY, eyes.posZ);
-        EntityLivingBase target = eyes.getAttackTarget();
+        Vector3d selfPos = new Vector3d(this.posX, this.posY, this.posZ);
+        EntityLivingBase target = this.getAttackTarget();
         if (target == null) {
             return false;
         }
+
+        // TODO: check if has blindness
+        //target.getActivePotionEffect()
+
         Vector3d playerPos = new Vector3d(target.posX, target.posY, target.posZ);
         Vec3 lookVec = target.getLookVec();
         Vector3d playerLook = new Vector3d(lookVec.xCoord, lookVec.yCoord, lookVec.zCoord);
@@ -123,18 +91,19 @@ public class EntityEyes extends EntityMob implements IModEntity {
 
     @Override
     public void setupAI() {
-        this.tasks.addTask(3, new EntityAIAvoidEntity(this, EntityOcelot.class, 6.0F, 1.0D, 1.2D));
-        //this.tasks.addTask(1, new EntityAIRestrictSun(this));
-        ///////this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityWolf.class, 0, false));
-        //this.targetTasks.addTask(1, new EntityAINearestAttackableTarget(this, EntityPlayerMP.class, 0, false));
-        //this.tasks.addTask(2, new EntityAIFleeSun(this, 1.0D));
-        //this.tasks.addTask(7, new CreepTowardPlayer(this, 0.25D, false));
+        this.getNavigator().setAvoidsWater(true);
+        this.tasks.addTask(3, new AvoidOcelots(this, EntityOcelot.class, 6.0F, 1.0D, 1.2D));
+        this.targetTasks.addTask(2, new TargetTamedWolves(this, EntityWolf.class, 0, false));
+        this.tasks.addTask(4, new EntityAIAttackOnCollide(this, EntityWolf.class, 1.0D, true));
+        this.targetTasks.addTask(1, new EntityAINearestAttackableTarget(this, EntityPlayerMP.class, 0, false));
+        this.tasks.addTask(1, new CreepTowardPlayer(this, 0.25D, false));
+        this.tasks.addTask(5, new EyesWander(this, 1.0D));
+        this.tasks.addTask(6, new EntityAILookIdle(this));
 
-        /*this.tasks.addTask(1, new EntityAISwimming(this));
-        this.tasks.addTask(2, new EntityAIRestrictSun(this));
-        this.tasks.addTask(3, new EntityAIFleeSun(this, 1.0D));
-        this.tasks.addTask(5, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(6, new EntityAILookIdle(this));*/
+        /* this.tasks.addTask(1, new EntityAISwimming(this));
+          this.tasks.addTask(1, new EntityAIRestrictSun(this));
+          this.tasks.addTask(2, new EntityAIFleeSun(this, 1.0D));
+        */
     }
 
     @Override
@@ -155,6 +124,7 @@ public class EntityEyes extends EntityMob implements IModEntity {
         super.applyEntityAttributes();
         getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2D);
         getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(Config.health);
+        getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(Config.eyeBaseAttackDamage);
     }
 
     /**
@@ -180,9 +150,10 @@ public class EntityEyes extends EntityMob implements IModEntity {
     @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
+        setEyeBrightness(Util.getEyeRenderingAlpha(this, Config.eyesCanAttackWhileLit));
         //EyesInTheShadows.debug("Looking in my dir: " + isPlayerLookingInMyGeneralDirection(this));
 
-        if(Minecraft.getMinecraft().theWorld != null && Minecraft.getMinecraft().theWorld.isRemote) {
+        //if(worldObj != null && worldObj.isRemote) {
             if (!getBlinkingState()) {
                 if (EyesInTheShadows.rand.nextFloat() < Config.blinkChance / 10) {
                     setBlinkingState(true);
@@ -194,31 +165,39 @@ public class EntityEyes extends EntityMob implements IModEntity {
                     setBlinkingState(false);
                 }
             }
-        } else {/*
-            Vec3 position = getPosEyes(this);
-            if (Minecraft.getMinecraft().theWorld.getLight(position, false) < 8) {
-                float maxWatchDistance = 16;
-                Vec3 eyes = getPositionEyes(1);
-                List<EntityPlayer> entities = world.getEntitiesWithinAABB(EntityPlayer.class,
-                        new AxisAlignedBB(eyes.x - maxWatchDistance, eyes.y - maxWatchDistance, eyes.z - maxWatchDistance,
-                                eyes.x + maxWatchDistance, eyes.y + maxWatchDistance, eyes.z + maxWatchDistance), (player) -> {
+        //}
+        if(worldObj != null) {
+            Vec3 eyePosEyes = Vec3.createVectorHelper(posX, posY + 1, posZ);//getPosEyes(this);
+            if (getBrightness() > 0) {
+                float maxWatchDistance = Config.watchDistance;
+                //eyePosEyes.yCoord += 2;
+                List<EntityPlayer> entities = worldObj.getEntitiesWithinAABB(EntityPlayer.class,
+                         AxisAlignedBB.getBoundingBox(
+                                 eyePosEyes.xCoord - maxWatchDistance, eyePosEyes.yCoord - maxWatchDistance, eyePosEyes.zCoord - maxWatchDistance,
+                                eyePosEyes.xCoord + maxWatchDistance, eyePosEyes.yCoord + maxWatchDistance, eyePosEyes.zCoord + maxWatchDistance));
 
-                            if (player.getPositionEyes(1).distanceTo(eyes) > maxWatchDistance)
-                                return false;
 
-                            Vec3 vec3d = player.getLook(1.0F).normalize();
-                            Vec3 vec3d1 = new Vec3d(this.posX - player.posX, this.getEntityBoundingBox().minY + (double) this.getEyeHeight() - (player.posY + (double) player.getEyeHeight()), this.posZ - player.posZ);
-                            double d0 = vec3d1.length();
-                            vec3d1 = vec3d1.normalize();
-                            double d1 = vec3d.dotProduct(vec3d1);
-                            return (d1 > 1.0D - 0.025D / d0) && player.canEntityBeSeen(this);
-                        });
+                boolean shouldDisappear = false;
+                for (EntityPlayer player : entities) {
+                    Vec3 playerPosEyes = Vec3.createVectorHelper(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+                    if (playerPosEyes.distanceTo(eyePosEyes) > maxWatchDistance) {
+                        shouldDisappear = false;
+                        continue;
+                    }
 
-                if (entities.size() > 0) {
+                    Vec3 vec3 = player.getLook(1.0F).normalize();
+                    Vec3 vec31 = Vec3.createVectorHelper(this.posX - player.posX, this.boundingBox.minY + (double)(this.height /*/ 2.0F*/ - getEyeHeight()) - (player.posY + (double)player.getEyeHeight()), this.posZ - player.posZ);
+                    double d0 = vec31.lengthVector();
+                    vec31 = vec31.normalize();
+                    double d1 = vec3.dotProduct(vec31);
+                    shouldDisappear = d1 > 1.0D - 0.025D / d0 && player.canEntityBeSeen(this);
+                }
+
+                if (shouldDisappear) {
                     disappear(true);
                 }
             }
-            */
+
         }
     }
 
@@ -238,7 +217,7 @@ public class EntityEyes extends EntityMob implements IModEntity {
 
         // DEBUG!!!!!
         if (par1DamageSource.getEntity() instanceof EntityPlayerMP) {
-            jumpscare((EntityPlayerMP) par1DamageSource.getEntity());
+            //jumpscare((EntityPlayerMP) par1DamageSource.getEntity());
         }
 
         if (isEntityInvulnerable()) {
@@ -259,10 +238,16 @@ public class EntityEyes extends EntityMob implements IModEntity {
         boolean jumpScared = Config.jumpscare && attackedEntity instanceof EntityPlayerMP;
         if (jumpScared) {
             jumpscare((EntityPlayerMP) attackedEntity);
+            disappear(false);
         }
 
-        /* jabelar says this is correct :shrug: */
-        this.setLastAttacker(attackedEntity);
+        if (this.attackTime == 0) {
+            this.attackTime = Config.tickBetweenAttacks;
+            super.attackEntityAsMob(attackedEntity);
+
+            /* jabelar says this is correct :shrug: */
+            this.setLastAttacker(attackedEntity);
+        }
 
         // stub return
         return false;
@@ -317,6 +302,15 @@ public class EntityEyes extends EntityMob implements IModEntity {
         return syncDataCompound.getFloat("blinkProgress");
     }
 
+    public void setEyeBrightness(float brightness) {
+        syncDataCompound.setFloat("brightness", brightness);
+        sendEntitySyncPacket();
+    }
+
+    public float getBrightness() {
+        return syncDataCompound.getFloat("brightness");
+    }
+
     @Override
     public void sendEntitySyncPacket() {
         PacketUtil.sendEntitySyncPacketToClient(this);
@@ -343,7 +337,7 @@ public class EntityEyes extends EntityMob implements IModEntity {
 
     @Override
     protected String getDeathSound() {
-        return EyesInTheShadows.varInstanceClient.disappearSound;
+        return EyesInTheShadows.varInstanceCommon.disappearSound;
     }
 
     @Override

@@ -7,7 +7,7 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
-import trollogyadherent.eyesintheshadows.client.EventHandler;
+import trollogyadherent.eyesintheshadows.event.ClientEventHandler;
 import trollogyadherent.eyesintheshadows.client.EyesRenderer;
 import trollogyadherent.eyesintheshadows.client.ModelEyes;
 import trollogyadherent.eyesintheshadows.entity.entities.EntityEyes;
@@ -22,9 +22,9 @@ public class ClientProxy extends CommonProxy {
 
         RenderingRegistry.registerEntityRenderingHandler(EntityEyes.class, new EyesRenderer(new ModelEyes(), 0.5F));
 
-        EventHandler eventHandler = new EventHandler();
-        MinecraftForge.EVENT_BUS.register(eventHandler);
-        FMLCommonHandler.instance().bus().register(eventHandler);
+        ClientEventHandler clientEventHandler = new ClientEventHandler();
+        MinecraftForge.EVENT_BUS.register(clientEventHandler);
+        FMLCommonHandler.instance().bus().register(clientEventHandler);
         super.preInit(event);
     }
 
