@@ -25,6 +25,10 @@ public class Config {
         public static final boolean eyeAggressionDependsOnLightLevel = true;
         public static final boolean changeColorWithAggro = true;
 
+        /* spawning */
+        public static final int maxSpawnedInChunk = 8;
+        public static final int despawnAfterAmountOfTicks = 2400;
+
         /* misc */
         public static final float aggroEscalationPerTick = 1f / (20 * 60 * 5);
         public static final int blinkDuration = 5;
@@ -64,6 +68,10 @@ public class Config {
     public static boolean eyeAggressionDependsOnLocalDifficulty = Defaults.eyeAggressionDependsOnLocalDifficulty;
     public static boolean eyeAggressionDependsOnLightLevel = Defaults.eyeAggressionDependsOnLightLevel;
     public static boolean changeColorWithAggro = Defaults.changeColorWithAggro;
+
+    /* spawning */
+    public static int maxSpawnedInChunk = Defaults.maxSpawnedInChunk;
+    public static int despawnAfterAmountOfTicks = Defaults.despawnAfterAmountOfTicks;
 
     /* misc */
     public static float aggroEscalationPerTick = Defaults.aggroEscalationPerTick;
@@ -150,6 +158,13 @@ public class Config {
 
         Property changeColorWithAggroProperty = config.get(Categories.eye_aggression, "changeColorWithAggro", Defaults.changeColorWithAggro, "While set to true, the eyes entities will become more and more red as their aggression level grows.");
         changeColorWithAggro = changeColorWithAggroProperty.getBoolean();
+
+        /* spawning */
+        Property maxSpawnedInChunkProperty = config.get(Categories.spawning, "maxSpawnedInChunk", Defaults.maxSpawnedInChunk, "Max Eyes spawning per chunk.", 1, Integer.MAX_VALUE);
+        maxSpawnedInChunk = maxSpawnedInChunkProperty.getInt();
+
+        Property despawnAfterAmountOfTicksProperty = config.get(Categories.spawning, "despawnAfterAmountOfTicks", Defaults.despawnAfterAmountOfTicks, "Ticks after which Eyes can despawn.", 1, Integer.MAX_VALUE);
+        despawnAfterAmountOfTicks = despawnAfterAmountOfTicksProperty.getInt();
 
         /* misc */
         Property blinkDurationProperty = config.get(Categories.misc, "blinkDuration", Defaults.blinkDuration, "Eye blink duration. Set to -1 to disable blinking", -1, Integer.MAX_VALUE);

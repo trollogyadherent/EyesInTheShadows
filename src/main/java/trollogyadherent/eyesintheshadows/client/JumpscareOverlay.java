@@ -83,6 +83,8 @@ public class JumpscareOverlay extends Gui
         int screenWidth = mc.displayWidth;
         int screenHeight = mc.displayHeight;
 
+        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+
         GL11.glClear(256);
         //GlStateManager.clear(256);
         GL11.glMatrixMode(5889);
@@ -108,9 +110,7 @@ public class JumpscareOverlay extends Gui
             return;
         }
 
-        float darkening = MathHelper.clamp_float(
-                Math.min(time/ ANIMATION_APPEAR, (ANIMATION_TOTAL - time) / ANIMATION_FADE), 0, 1
-        );
+        float darkening = MathHelper.clamp_float(Math.min(time/ ANIMATION_APPEAR, (ANIMATION_TOTAL - time) / ANIMATION_FADE), 0, 1);
 
         boolean showCreep = false;
         int blinkstate = 0;
@@ -143,16 +143,10 @@ public class JumpscareOverlay extends Gui
             int drawW = MathHelper.floor_float(texW * scale1);
             int drawX = (screenWidth-drawW)/2;
             GL11.glEnable(GL11.GL_BLEND);
-            //GlStateManager.enableBlend();
-
-            //alpha = 1;
 
             GL11.glColor4f(1, 1, 1, alpha);
 
             drawScaledCustomTexture(TEXTURE_FLASH, texW, texH, 0, 0, texW, texH, drawX, drawY, drawW, drawH, (alpha << 24) | 0xFFFFFF);
-
-            //drawScaledCustomTexture(TEXTURE_FLASH, texW, texH, 0, 0, texW, texH, drawX, drawY, drawW, drawH);
-            //GL11.glDisable(GL11.GL_BLEND);
         }
         else
         {
@@ -165,6 +159,7 @@ public class JumpscareOverlay extends Gui
 
         if(blinkstate == 1)
         {
+            GL11.glPopAttrib();
             return;
         }
 
@@ -197,6 +192,8 @@ public class JumpscareOverlay extends Gui
         drawScaledCustomTexture(TEXTURE_EYES, texW, texH, tx, ty, tw, th, drawX, drawY, drawW, drawH);
 
         GL11.glDisable(GL11.GL_ALPHA_TEST);
+
+        GL11.glPopAttrib();
     }
 
     private void drawScaledCustomTexture(ResourceLocation tex, float texW, float texH, int tx, int ty, int tw, int th, float targetX, float targetY, float targetW, float targetH)
@@ -205,18 +202,6 @@ public class JumpscareOverlay extends Gui
 
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
-
-        /*BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-
-        buffer.pos(targetX, targetY, 0)
-                .tex(tx / texW, ty / texH).endVertex();
-        buffer.pos(targetX, targetY + targetH, 0)
-                .tex(tx / texW, (ty + th) / texH).endVertex();
-        buffer.pos(targetX + targetW, targetY + targetH, 0)
-                .tex((tx + tw) / texW, (ty + th) / texH).endVertex();
-        buffer.pos(targetX + targetW, targetY, 0)
-                .tex((tx + tw) / texW, ty / texH).endVertex();*/
 
         tessellator.addVertexWithUV(targetX, targetY, 0, tx / texW, ty / texH);
         tessellator.addVertexWithUV(targetX, targetY + targetH, 0, tx / texW, (ty + th) / texH);
@@ -241,22 +226,6 @@ public class JumpscareOverlay extends Gui
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         Tessellator tessellator = Tessellator.instance;
-
-        /*BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-
-        buffer.pos(targetX, targetY, 0)
-                .tex(tx / texW, ty / texH)
-                .color(r,g,b,a).endVertex();
-        buffer.pos(targetX, targetY + targetH, 0)
-                .tex(tx / texW, (ty + th) / texH)
-                .color(r,g,b,a).endVertex();
-        buffer.pos(targetX + targetW, targetY + targetH, 0)
-                .tex((tx + tw) / texW, (ty + th) / texH)
-                .color(r,g,b,a).endVertex();
-        buffer.pos(targetX + targetW, targetY, 0)
-                .tex((tx + tw) / texW, ty / texH)
-                .color(r,g,b,a).endVertex();*/
 
         EyesInTheShadows.debug("Showing creep, alpha: " + a);
 

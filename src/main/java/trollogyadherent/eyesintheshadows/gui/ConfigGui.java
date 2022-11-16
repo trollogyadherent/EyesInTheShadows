@@ -15,11 +15,12 @@ public class ConfigGui extends GuiConfig {
 
     private static IConfigElement ceGeneral = new ConfigElement(Config.config.getCategory(Config.Categories.general));
     private static IConfigElement ceAggro = new ConfigElement(Config.config.getCategory(Config.Categories.eye_aggression));
+    private static IConfigElement ceSpawning = new ConfigElement(Config.config.getCategory(Config.Categories.spawning));
     private static IConfigElement ceMisc = new ConfigElement(Config.config.getCategory(Config.Categories.misc));
 
     public ConfigGui(GuiScreen parent) {
         //this.parentScreen = parent;
-        super(parent, ImmutableList.of(ceGeneral, ceAggro, ceMisc), Tags.MODID, Tags.MODID, false, false, I18n.format(Tags.MODID + ".configgui.title"), EyesInTheShadows.confFile.getAbsolutePath());
+        super(parent, ImmutableList.of(ceGeneral, ceAggro, ceSpawning, ceMisc), Tags.MODID, Tags.MODID, false, false, I18n.format(Tags.MODID + ".configgui.title"), EyesInTheShadows.confFile.getAbsolutePath());
         EyesInTheShadows.debug("Instantiating config gui");
     }
 

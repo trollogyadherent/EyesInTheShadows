@@ -238,8 +238,8 @@ public class EntityEyes extends EntityMob implements IModEntity {
     public boolean attackEntityFrom(DamageSource par1DamageSource, float par2) {
 
         // DEBUG!!!!!
-        if (par1DamageSource.getEntity() instanceof EntityPlayerMP) {
-            //jumpscare((EntityPlayerMP) par1DamageSource.getEntity());
+        if (par1DamageSource.getEntity() instanceof EntityPlayerMP && EyesInTheShadows.isDebugMode()) {
+            jumpscare((EntityPlayerMP) par1DamageSource.getEntity());
         }
 
         if (isEntityInvulnerable()) {
@@ -277,7 +277,7 @@ public class EntityEyes extends EntityMob implements IModEntity {
 
     @Override
     public int getMaxSpawnedInChunk() {
-        return 8;  //TODO: configurable
+        return Config.maxSpawnedInChunk;
     }
 
     /**
@@ -285,7 +285,7 @@ public class EntityEyes extends EntityMob implements IModEntity {
      */
     @Override
     protected boolean canDespawn() {
-        return ticksExisted > 2400; //TODO: configurable
+        return ticksExisted > Config.despawnAfterAmountOfTicks;
     }
 
     // *****************************************************
