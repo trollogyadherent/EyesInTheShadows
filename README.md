@@ -1,5 +1,5 @@
 # Eyes in the Shadows mod for Minecraft Forge 1.7.10
-![eyes](logo_small.png)
+![logo](logo_small.png)
 
 ## Pre-alpha, eyes don't spawn naturally, poison effect not applied on jumpscare, expect bugs too
 
@@ -50,5 +50,5 @@ It's free real estate. Do it (for free).
 * [TheGreyGhost](http://greyminecraftcoder.blogspot.com/p/list-of-topics.html), for superb tutorials as well.
 
 <br>
-<br>
-![LGPLV3+SNEED](lgplsneed_small.png)
+
+![license](lgplsneed_small.png)
