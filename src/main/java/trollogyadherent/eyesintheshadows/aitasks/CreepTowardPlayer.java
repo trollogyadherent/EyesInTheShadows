@@ -2,6 +2,7 @@ package trollogyadherent.eyesintheshadows.aitasks;
 
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
+import trollogyadherent.eyesintheshadows.EyesInTheShadows;
 import trollogyadherent.eyesintheshadows.entity.entities.EntityEyes;
 
 public class CreepTowardPlayer extends EntityAIAttackOnCollide {
@@ -28,5 +29,18 @@ public class CreepTowardPlayer extends EntityAIAttackOnCollide {
             return false;
         }
         return super.shouldExecute();
+    }
+
+    @Override
+    public void updateTask() {
+        double speed = eyes.getSpeedFromAggro();
+        System.out.println("aggro: " + eyes.getAggroLevel() + ", speed: " + speed);
+        try {
+            EyesInTheShadows.varInstanceCommon.speedTowardsTargetField.set(this, speed);
+        } catch (IllegalAccessException e) {
+            EyesInTheShadows.error("Failed to access reflected field (speedTowardsTarget)");
+            e.printStackTrace();
+        }
+        super.updateTask();
     }
 }

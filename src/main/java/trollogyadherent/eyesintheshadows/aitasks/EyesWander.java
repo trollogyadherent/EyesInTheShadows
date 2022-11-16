@@ -13,7 +13,12 @@ public class EyesWander extends EntityAIWander {
     }
 
     @Override
+    public boolean continueExecuting() {
+        return eyes.getBrightness() > 0 && !eyes.isPlayerLookingInMyGeneralDirection() && super.continueExecuting();
+    }
+
+    @Override
     public boolean shouldExecute() {
-        return Config.eyesWander && eyes.getBrightness() > 0 && super.shouldExecute();
+        return Config.eyesWander && eyes.getBrightness() > 0 && !eyes.isPlayerLookingInMyGeneralDirection() && super.shouldExecute();
     }
 }

@@ -17,7 +17,7 @@ public class CommonProxy {
 
     // preInit "Run before anything else. Read your config, create blocks, items,
     // etc, and register them with the GameRegistry."
-    public void preInit(FMLPreInitializationEvent event) 	{
+    public void preInit(FMLPreInitializationEvent event) {
         EyesInTheShadows.varInstanceCommon = new VarInstanceCommon();
         if (Util.isServer()) {
             EyesInTheShadows.varInstanceServer = new VarInstanceServer();

@@ -42,7 +42,7 @@ public class EntityEyes extends EntityMob implements IModEntity {
         this.stepHeight = 1.0F;
         /* Setting aggro level depending on difficulty, if enabled in config */
         if (Config.eyeAggressionDependsOnLocalDifficulty) {
-            setAggroLevel(EyesInTheShadows.varInstanceCommon.rand.nextFloat() * worldObj.difficultySetting.getDifficultyId(), 1);
+            setAggroLevel(EyesInTheShadows.varInstanceCommon.rand.nextFloat() * worldObj.difficultySetting.getDifficultyId() / 10);
         }
         initSyncDataCompound();
         setupAI();
@@ -209,11 +209,17 @@ public class EntityEyes extends EntityMob implements IModEntity {
 
         if (Config.enableEyeAggressionEscalation && alpha > 0)
         {
-            setAggroLevel(getAggroLevel() + Config.aggroEscalationPerTick, 1);
-        }
-
-        if (Config.eyeAggressionDependsOnLightLevel) {
-
+            if (!isPlayerLookingInMyGeneralDirection()) {
+                setAggroLevel(getAggroLevel() + Config.aggroEscalationPerTick);
+                if (Config.eyeAggressionDependsOnLightLevel) {
+                    setAggroLevel(getAggroLevel() + Config.aggroEscalationPerTick * alpha);
+                }
+            } else {
+                setAggroLevel(getAggroLevel() - Config.aggroEscalationPerTick * 2);
+                /*if (Config.eyeAggressionDependsOnLightLevel) {
+                    setAggroLevel(getAggroLevel() - Config.aggroEscalationPerTick * alpha);
+                }*/
+            }
         }
     }
 
@@ -327,8 +333,8 @@ public class EntityEyes extends EntityMob implements IModEntity {
         return syncDataCompound.getFloat("brightness");
     }
 
-    public void setAggroLevel(float aggro, float limit) {
-        syncDataCompound.setFloat("aggro", MathHelper.clamp_float(aggro, 0, limit));
+    public void setAggroLevel(float aggro) {
+        syncDataCompound.setFloat("aggro", MathHelper.clamp_float(aggro, 0, 1));
         sendEntitySyncPacket();
     }
 
@@ -360,12 +366,13 @@ public class EntityEyes extends EntityMob implements IModEntity {
         syncDataCompound.setFloat("scaleFactor", 1.0F);
     }
 
-    private double getSpeedFromAggro()
+    public double getSpeedFromAggro()
     {
         if (Util.getEyeRenderingAlpha(this, Config.eyesCanAttackWhileLit) <= 0) {
             return 0;
         }
-        return Util.clampedLerp(getAggroLevel(), Config.speedNoAggro, Config.speedFullAggro);
+        return Config.speedNoAggro + (Config.speedFullAggro - Config.speedNoAggro) * getAggroLevel();
+        //return Util.clampedLerp(getAggroLevel(), Config.speedNoAggro, Config.speedFullAggro);
     }
 
     @Override

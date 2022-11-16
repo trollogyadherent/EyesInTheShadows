@@ -23,6 +23,7 @@ public class Config {
         public static final boolean enableEyeAggressionEscalation = true;
         public static final boolean eyeAggressionDependsOnLocalDifficulty = true;
         public static final boolean eyeAggressionDependsOnLightLevel = true;
+        public static final boolean changeColorWithAggro = true;
 
         /* misc */
         public static final float aggroEscalationPerTick = 1f / (20 * 60 * 5);
@@ -62,6 +63,7 @@ public class Config {
     public static boolean enableEyeAggressionEscalation = Defaults.enableEyeAggressionEscalation;
     public static boolean eyeAggressionDependsOnLocalDifficulty = Defaults.eyeAggressionDependsOnLocalDifficulty;
     public static boolean eyeAggressionDependsOnLightLevel = Defaults.eyeAggressionDependsOnLightLevel;
+    public static boolean changeColorWithAggro = Defaults.changeColorWithAggro;
 
     /* misc */
     public static float aggroEscalationPerTick = Defaults.aggroEscalationPerTick;
@@ -145,6 +147,9 @@ public class Config {
 
         Property eyeAggressionDependsOnLightLevelProperty = config.get(Categories.eye_aggression, "eyeAggressionDependsOnLightLevel", Defaults.eyeAggressionDependsOnLightLevel, "While set to true, the eyes entities will have higher aggression values on lower light levels.");
         eyeAggressionDependsOnLightLevel = eyeAggressionDependsOnLightLevelProperty.getBoolean();
+
+        Property changeColorWithAggroProperty = config.get(Categories.eye_aggression, "changeColorWithAggro", Defaults.changeColorWithAggro, "While set to true, the eyes entities will become more and more red as their aggression level grows.");
+        changeColorWithAggro = changeColorWithAggroProperty.getBoolean();
 
         /* misc */
         Property blinkDurationProperty = config.get(Categories.misc, "blinkDuration", Defaults.blinkDuration, "Eye blink duration. Set to -1 to disable blinking", -1, Integer.MAX_VALUE);

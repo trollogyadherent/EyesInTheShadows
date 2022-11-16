@@ -117,6 +117,11 @@ public class ModelEyes extends ModelBase {
             return;
         }
 
+        float aggroColorAdjust = 1;
+        if (Config.eyeAggressionDependsOnLightLevel) {
+            aggroColorAdjust = 1 - MathHelper.clamp_float(parEntity.getAggroLevel(), 0, 1);
+        }
+
         // scale the whole thing for big or small entities
         GL11.glPushMatrix();
         ///GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -143,7 +148,10 @@ public class ModelEyes extends ModelBase {
         GL11.glDepthMask(false);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
-        GL11.glColor4f(1, 1, 1, mixAlpha);
+
+        /* EXPERIMENTAL */
+        GL11.glColor4f(1, aggroColorAdjust, aggroColorAdjust, mixAlpha);
+
         //Minecraft.getMinecraft().entityRenderer.  // something with fog color
 
 

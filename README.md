@@ -33,7 +33,7 @@ It's free real estate. Do it (for free).
 ## License
 `LgplV3 + SNEED`, formerly `BSD 3`
 
-## Contact (Want to see your ads in the tab menu? I will make a good price)
+## Contact
 * Matrix: `#boysgregified:matrix.thisisjoes.site`.
 * Website: [mcdrama.net](https://www.mcdrama.net/articles/mods.html).
 * This project [GitHub repo](https://github.com/trollogyadherent/EyesInTheShadows).
