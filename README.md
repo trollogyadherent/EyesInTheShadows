@@ -1,6 +1,6 @@
 # Eyes in the Shadows mod for Minecraft Forge 1.7.10
 
-## WIP, eyes don't spawn naturally, jumpscrare overlay doesn't fully work, poison effect not applied on jumpscare, and some other minor things are missing/broken
+## WIP, eyes don't spawn naturally, jumpscare overlay doesn't fully work, poison effect not applied on jumpscare, and some other minor things are missing/broken
 
 The barrier between the world of the living and the world of the dead is already thin in the Minecraft lands.
 The days as Halloween draws closer, it weakens down even further.
