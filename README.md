@@ -20,7 +20,7 @@ It is a backport of the [Eyes in the Darkness](https://github.com/gigaherz/EyesI
 [Support him on Patreon](https://www.patreon.com/gigaherz).
 Please DO NOT report any issues or send any requests concerning this port to gigaherz, open an issue here instead.
 <br>
-Showcase by Mischief of Mice:<br>
+Original mod showcase by Mischief of Mice:<br>
 [![Original mod showcase by Mischief of Mice](https://img.youtube.com/vi/JxcLQwxwgyw/0.jpg)](https://www.youtube.com/watch?v=JxcLQwxwgyw)
 
 ### Changes from the original
