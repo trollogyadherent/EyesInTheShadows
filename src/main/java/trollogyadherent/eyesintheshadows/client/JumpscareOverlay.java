@@ -39,7 +39,7 @@ public class JumpscareOverlay extends Gui
     private static final int ANIMATION_LINGER = 90;
     private static final int ANIMATION_BLINK = 60;
     private static final int ANIMATION_SCARE1 = 20;
-    private static final int ANIMATION_FADE = 100;//20;
+    private static final int ANIMATION_FADE = 20;
     private static final int ANIMATION_BLINK_START = ANIMATION_APPEAR + ANIMATION_LINGER;
     private static final int ANIMATION_SCARE_START = ANIMATION_BLINK_START + ANIMATION_BLINK;
     private static final int ANIMATION_FADE_START = ANIMATION_SCARE_START + ANIMATION_SCARE1;
@@ -100,7 +100,8 @@ public class JumpscareOverlay extends Gui
         GL11.glTranslatef(0.0F, 0.0F, -2000.0F);
         //GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
+
+        //GL11.glEnable(GL11.GL_ALPHA_TEST);
 
         float time = progress + event.partialTicks;
         if (time >= ANIMATION_TOTAL)
@@ -147,17 +148,16 @@ public class JumpscareOverlay extends Gui
             GL11.glColor4f(1, 1, 1, alpha);
 
             drawScaledCustomTexture(TEXTURE_FLASH, texW, texH, 0, 0, texW, texH, drawX, drawY, drawW, drawH, (alpha << 24) | 0xFFFFFF);
+            GL11.glFlush();
         }
         else
         {
             drawRect(0,0, screenWidth, screenHeight, alpha << 24);
             GL11.glColor4f(1, 1, 1, 1);
-            //GlStateManager.color(1,1,1,1);
             GL11.glEnable(GL11.GL_BLEND);
-            //GlStateManager.enableBlend();
         }
 
-        if(blinkstate == 1)
+        if (blinkstate == 1)
         {
             GL11.glPopAttrib();
             return;
@@ -222,15 +222,17 @@ public class JumpscareOverlay extends Gui
 
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 
+        //GL11.glDisable(GL11.GL_ALPHA_TEST);
+
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         Tessellator tessellator = Tessellator.instance;
 
-        EyesInTheShadows.debug("Showing creep, alpha: " + a);
+        //EyesInTheShadows.debug("Showing creep, alpha: " + a);
 
-        tessellator.setColorRGBA(r, g, b, a);
         tessellator.startDrawingQuads();
+        tessellator.setColorRGBA(r, g, b, a);
         tessellator.addVertexWithUV(targetX, targetY, 0, tx / texW, ty / texH);
         tessellator.addVertexWithUV(targetX, targetY + targetH, 0, tx / texW, (ty + th) / texH);
         tessellator.addVertexWithUV(targetX + targetW, targetY + targetH, 0, (tx + tw) / texW, (ty + th) / texH);

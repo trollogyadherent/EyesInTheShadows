@@ -3,10 +3,12 @@ package trollogyadherent.eyesintheshadows.event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.block.Block;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
 import org.lwjgl.input.Keyboard;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
+import trollogyadherent.eyesintheshadows.util.PotionUtil;
 
 public class ClientEventHandler {
     int lastPressedKey;
@@ -20,19 +22,23 @@ public class ClientEventHandler {
             } else if (lastPressedKey == Keyboard.KEY_R) {
                 lastPressedKey = -1;
 
-                int x = MathHelper.floor_double(e.player.posX) + EyesInTheShadows.varInstanceClient.xmod;
+                Potion p = PotionUtil.getPotionById(1);
+                if (p != null)
+                    EyesInTheShadows.debug(p.toString());
+
+                /*int x = MathHelper.floor_double(e.player.posX) + EyesInTheShadows.varInstanceClient.xmod;
                 int y = MathHelper.floor_double(e.player.posY) + EyesInTheShadows.varInstanceClient.ymod;
                 int z = MathHelper.floor_double(e.player.posZ) + EyesInTheShadows.varInstanceClient.zmod;
                 Block b = e.player.getEntityWorld().getBlock(x, y, z);
                 EyesInTheShadows.debug("Block name: " + b.getLocalizedName() + ", x: " + x + ", y: " + y + ", z :" + z);
                 EyesInTheShadows.debug("Block lightvalue: " + b.getLightValue());
-                /* seems like the winner */ EyesInTheShadows.debug("world.getBlockLightValue: " + e.player.getEntityWorld().getBlockLightValue(x, y, z));
+                EyesInTheShadows.debug("world.getBlockLightValue: " + e.player.getEntityWorld().getBlockLightValue(x, y, z));
                 EyesInTheShadows.debug("world.getBlockLightValue_do: " + e.player.getEntityWorld().getBlockLightValue_do(x, y, z, false));
                 EyesInTheShadows.debug("world.getFullBlockLightValue: " + e.player.getEntityWorld().getFullBlockLightValue(x, y, z));
                 EyesInTheShadows.debug("world.getLightBrightness: " + e.player.getEntityWorld().getLightBrightness(x, y, z));
                 EyesInTheShadows.debug("world.getSavedLightValue: " + e.player.getEntityWorld().getSavedLightValue(EnumSkyBlock.Block, x, y, z));
                 EyesInTheShadows.debug("b.getLightOpacity: " + b.getLightOpacity());
-                EyesInTheShadows.debug("===================eventhandler==================");
+                EyesInTheShadows.debug("===================eventhandler==================");*/
             }
 
             if (Keyboard.isKeyDown(Keyboard.KEY_J)) {

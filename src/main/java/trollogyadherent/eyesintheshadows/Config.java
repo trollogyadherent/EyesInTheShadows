@@ -43,6 +43,7 @@ public class Config {
         public static final boolean eyesFleeOcelots = true;
         public static final float watchDistance = 16F;
         public static final boolean eyesWander = true;
+        public static final boolean printPotions = false;
     }
 
     public static class Categories {
