@@ -8,6 +8,7 @@ import net.minecraftforge.common.MinecraftForge;
 import trollogyadherent.eyesintheshadows.entity.entities.EntityEyes;
 import trollogyadherent.eyesintheshadows.event.CommonEventHandler;
 import trollogyadherent.eyesintheshadows.packet.PacketHandler;
+import trollogyadherent.eyesintheshadows.util.PotionUtil;
 import trollogyadherent.eyesintheshadows.util.Util;
 import trollogyadherent.eyesintheshadows.varinstances.VarInstanceCommon;
 import trollogyadherent.eyesintheshadows.varinstances.VarInstanceServer;
@@ -48,7 +49,9 @@ public class CommonProxy {
 
     // postInit "Handle interaction with other mods, complete your setup based on this."
     public void postInit(FMLPostInitializationEvent event) {
-
+        if (Config.printPotions) {
+            PotionUtil.printPotionIds();
+        }
     }
 
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {

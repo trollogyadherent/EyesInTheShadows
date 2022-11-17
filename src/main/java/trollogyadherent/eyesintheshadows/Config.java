@@ -3,6 +3,7 @@ package trollogyadherent.eyesintheshadows;
 import cpw.mods.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import trollogyadherent.eyesintheshadows.gui.ArrayEntryPotionID;
 import trollogyadherent.eyesintheshadows.util.Util;
 
 import java.io.File;
@@ -44,6 +45,7 @@ public class Config {
         public static final float watchDistance = 16F;
         public static final boolean eyesWander = true;
         public static final boolean printPotions = false;
+        public static final int[] potionIds = {};
     }
 
     public static class Categories {
@@ -88,6 +90,8 @@ public class Config {
     public static boolean eyesFleeOcelots = Defaults.eyesFleeOcelots;
     public static float watchDistance = Defaults.watchDistance;
     public static boolean eyesWander = Defaults.eyesWander;
+    public static boolean printPotions = Defaults.printPotions;
+    public static int[] potionIds = Defaults.potionIds;
 
     public static void synchronizeConfigurationClient(File configFile, boolean force, boolean load) {
         if (!loaded || force) {
@@ -99,14 +103,20 @@ public class Config {
             synchronizeConfigurationCommon();
 
             /* misc */
-            Property blinkChanceProp = config.get(Categories.misc, "blinkChance", Defaults.blinkChance, "How often eyes should blink", 0, 1);
+            Property blinkChanceProp = config.get(Categories.misc, "blinkChance", Defaults.blinkChance, "How often Eyes should blink.", 0, 1);
             if (!Util.isServer()) {
                 blinkChanceProp.setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class);
             }
             blinkChance = (float) blinkChanceProp.getDouble();
 
-            Property scaleFactorProperty = config.get(Categories.misc, "scale_factor", Defaults.scaleFactor, "Eye size scale factor (purely visual)", 0.01F, Float.MAX_VALUE);
+            Property scaleFactorProperty = config.get(Categories.misc, "scale_factor", Defaults.scaleFactor, "Eye size scale factor (purely visual).", 0.01F, Float.MAX_VALUE);
             scaleFactor = (float) scaleFactorProperty.getDouble();
+
+            Property potionIdsProperty = config.get(Categories.misc, "potionIds", Defaults.potionIds, "List of potion effect id's that should be applied to a player attacked by Eyes.");
+            if (!Util.isServer()) {
+                potionIdsProperty.setConfigEntryClass(ArrayEntryPotionID.class);
+            }
+            potionIds = potionIdsProperty.getIntList();
         }
         if(config.hasChanged()) {
             config.save();
@@ -122,6 +132,9 @@ public class Config {
 
             Property blinkChanceProp = config.get(Categories.misc, "blinkChance", Defaults.blinkChance, "How often eyes should blink", 0, 1);
             blinkChance = (float) blinkChanceProp.getDouble();
+
+            Property potionIdsProperty = config.get(Categories.misc, "potionIds", Defaults.potionIds, "List of potion effect id's that should be applied to a player attacked by Eyes.");
+            potionIds = potionIdsProperty.getIntList();
 
             synchronizeConfigurationCommon();
         }
@@ -200,5 +213,8 @@ public class Config {
 
         Property eyesWanderProperty = config.get(Categories.misc, "eyesWander", Defaults.eyesWander, "Controls whether Eyes wander around.");
         eyesWander = eyesWanderProperty.getBoolean();
+
+        Property printPotionsProperty = config.get(Categories.misc, "printPotions", Defaults.printPotions, "If set to true, print a list of potions and their ID's in the logs.");
+        printPotions = printPotionsProperty.getBoolean();
     }
 }
