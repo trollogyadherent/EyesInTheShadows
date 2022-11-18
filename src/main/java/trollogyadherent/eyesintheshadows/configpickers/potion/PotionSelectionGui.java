@@ -100,10 +100,8 @@ public class PotionSelectionGui extends GuiScreen {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        if (button.id == 3)
-        {
+    protected void actionPerformed(GuiButton button) {
+        if (button.id == 3) {
             showParentScreen();
         }
     }

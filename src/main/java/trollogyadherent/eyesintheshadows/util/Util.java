@@ -239,7 +239,7 @@ public class Util {
         return (char) 167 + colorMap.get(color);
     }
 
-    public static Object[] addAtIndex(Object[] arr, int index, int val) {
+    public static Object[] addAtIndex(Object[] arr, int index, Object val) {
         if (index < 0 || index > arr.length) {
             return null;
         }

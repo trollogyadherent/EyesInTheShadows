@@ -3,7 +3,6 @@ package trollogyadherent.eyesintheshadows.configpickers.mob;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
-import trollogyadherent.eyesintheshadows.util.Util;
 
 public class MobListEntry {
     protected final String mobString;
@@ -59,10 +58,6 @@ public class MobListEntry {
         return I18n.format(mobString);
     }
 
-    protected void bindIcon() {
-        this.mc.getTextureManager().bindTexture(previous.potionResourceLocation); //bindTexturePackIcon(this.field_148317_a.getTextureManager());
-    }
-
     protected boolean func_148310_d()
     {
         return true;
@@ -70,12 +65,12 @@ public class MobListEntry {
 
     protected boolean func_148309_e()
     {
-        return !this.previous.hasSkinEntry(this);
+        return !this.previous.hasMobListEntry(this);
     }
 
     protected boolean func_148308_f()
     {
-        return this.previous.hasSkinEntry(this);
+        return this.previous.hasMobListEntry(this);
     }
 
     /*protected boolean func_148314_g()

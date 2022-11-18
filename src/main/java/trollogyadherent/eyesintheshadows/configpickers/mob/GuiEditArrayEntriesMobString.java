@@ -10,6 +10,8 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.input.Keyboard;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
+import trollogyadherent.eyesintheshadows.configpickers.potion.GuiEditArrayEntriesPotionId;
+import trollogyadherent.eyesintheshadows.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +49,7 @@ public class GuiEditArrayEntriesMobString extends GuiEditArrayEntries {
         listEntries.add(new BaseEntryMobString(parentScreen, owningGuiReflected, this, configElement));
     }
 
-    @Override
+    /*@Override
     public void addNewEntry(int index)
     {
         MobEntry mobEntry = new MobEntry(parentScreen, owningGuiReflected, this, this.configElement, "None", currentValues.length);
@@ -60,6 +62,30 @@ public class GuiEditArrayEntriesMobString extends GuiEditArrayEntries {
         this.canAddMoreEntries = !configElement.isListLengthFixed()
                 && (configElement.getMaxListLength() == -1 || this.listEntries.size() - 1 < configElement.getMaxListLength());
         keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
+    }*/
+
+    @Override
+    public void addNewEntry(int index)
+    {
+        MobEntry mobEntry = new MobEntry(parentScreen, owningGuiReflected, this, this.configElement, "None", currentValues.length);
+
+        Object[] newArr = Util.addAtIndex(currentValues, index, "None");
+
+        currentValues = newArr;
+        returnInfo.values = newArr;
+        listEntries.add(index, mobEntry);
+        this.canAddMoreEntries = !configElement.isListLengthFixed()
+                && (configElement.getMaxListLength() == -1 || this.listEntries.size() - 1 < configElement.getMaxListLength());
+        keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
+    }
+
+    @Override
+    public void removeEntry(int index)
+    {
+        Object[] newArr = Util.removeAtIndex(currentValues, index);
+        currentValues = newArr;
+        returnInfo.values = newArr;
+        super.removeEntry(index);
     }
 
     public static class BaseEntryMobString extends BaseEntry {

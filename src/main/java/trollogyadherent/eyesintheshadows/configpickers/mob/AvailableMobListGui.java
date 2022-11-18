@@ -17,22 +17,51 @@ public class AvailableMobListGui extends GuiListExtended {
     int configListIndex;
     GuiEditArrayMobString.ReturnInfo returnInfo;
 
-    public AvailableMobListGui(Minecraft mc, int listWidth, int listHeight, int entryHeight, List mobEntries, GuiEditArrayMobString.ReturnInfo returnInfo, int index) {
+    public AvailableMobListGui(Minecraft mc, int top, int bottom, int listWidth, int listHeight, int entryHeight, List mobEntries, GuiEditArrayMobString.ReturnInfo returnInfo, int index) {
         super(mc, listWidth, listHeight, 32, listHeight - 55 + 4 , entryHeight);
         this.mc = mc;
         this.potionEntries = mobEntries;
         this.returnInfo = returnInfo;
         this.configListIndex = index;
         this.field_148163_i = false;
+        this.top = top;
+        this.bottom = bottom;
         //this.setHasListHeader(true, (int)((float)mc.fontRenderer.FONT_HEIGHT * 1.5F));
         this.setHasListHeader(false, 0);
         selectedIndex = -1;
+        MobRenderTicker.setMob(null);
         for (int i = 0; i < mobEntries.size(); i++) {
             if (((MobListEntry) mobEntries.get(i)).mobString.equals(returnInfo.values[configListIndex])) {
-                selectedIndex = i;
+                selectEntry(i, true);
                 System.out.println("found index+ " + i);
             }
         }
+    }
+
+    public void moveSelectionUp() {
+        selectEntry(selectedIndex - 1, true);
+    }
+
+    public void moveSelectionDown() {
+        selectEntry(selectedIndex + 1, true);
+    }
+
+    public void selectEntry(int index, boolean doScroll) {
+        if (index < 0 || index >= getSize()) {
+            return;
+        }
+        if (doScroll) {
+            scrollTo(index);
+        }
+        MobRenderTicker.setMob(this.getListEntry_(index).mobString);
+        selectedIndex = index;
+        returnInfo.values[configListIndex] = this.getListEntry_(index).mobString;
+    }
+
+    public void scrollTo(int index) {
+        int yPos = (index + 1) * slotHeight - getAmountScrolled();
+        int h = bottom - top;
+        scrollBy(yPos - h / 2);
     }
 
     protected void drawListHeader(int par1, int par2, Tessellator tessellator) {
@@ -105,8 +134,9 @@ public class AvailableMobListGui extends GuiListExtended {
                     //this.func_148143_b(false);  //this thing blocks the ability to drag the scrollbar with the mouse
 
                     //OfflineAuth.varInstanceClient.skinGuiRenderTicker.setSkin(this.getListEntry_(l).skinName);
-                    returnInfo.values[configListIndex] = this.getListEntry_(l).mobString;
-                    MobRenderTicker.setMob(this.getListEntry_(l).mobString);
+                    //returnInfo.values[configListIndex] = this.getListEntry_(l).mobString;
+                    //MobRenderTicker.setMob(this.getListEntry_(l).mobString);
+                    selectEntry(l, false);
                     return true;
                 }
             }

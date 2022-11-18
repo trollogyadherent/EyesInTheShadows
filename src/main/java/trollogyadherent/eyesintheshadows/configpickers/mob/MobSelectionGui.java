@@ -7,11 +7,12 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityList;
-import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
+import trollogyadherent.eyesintheshadows.configpickers.potion.GuiEditArrayPotionID;
+import trollogyadherent.eyesintheshadows.util.ClientUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,14 +22,11 @@ import java.util.List;
 public class MobSelectionGui extends GuiScreen {
     GuiEditArrayMobString.ReturnInfo returnInfo;
     int index;
-    private List availablePotions;
-    private String status = "Please select a mob:";
+    private List availableMobs;
+    private String status = I18n.format("eyesintheshadows.mob_selection_title");
     private AvailableMobListGui availableMobListGui;
     String originalValue;
-
-    ResourceLocation potionResourceLocation = new ResourceLocation("textures/items/potion_bottle_empty.png");
-    ResourceLocation potionSplashResourceLocation = new ResourceLocation("textures/items/potion_bottle_splash.png");
-    ResourceLocation potionOverlayResourceLocation = new ResourceLocation("textures/items/potion_overlay.png");
+    ResourceLocation mobBackground = new ResourceLocation("textures/gui/demo_background.png");
 
     public MobSelectionGui(GuiEditArrayMobString parentScreen, Object[] beforeValues, Object[] currentValues, int index, GuiEditArrayMobString.ReturnInfo returnInfo) {
 
@@ -43,7 +41,7 @@ public class MobSelectionGui extends GuiScreen {
         EyesInTheShadows.debug("currentValues passed as args:");
         EyesInTheShadows.debug(Arrays.toString(currentValues));
 
-        this.availablePotions = new ArrayList();
+        this.availableMobs = new ArrayList();
         //this.status = I18n.format("offlineauth.skingui.select_skin");
 
         System.out.println(returnInfo.values[index]);
@@ -58,14 +56,8 @@ public class MobSelectionGui extends GuiScreen {
 
         for (Object e : EntityList.stringToClassMapping.keySet()) {
             MobListEntry entry = new MobListEntry(this, (String) e);
-            this.availablePotions.add(entry);
+            this.availableMobs.add(entry);
         }
-
-        this.availableMobListGui = new AvailableMobListGui(this.mc, 410, this.height, 36, this.availablePotions, returnInfo, index);
-        //this.availablePotionListGui.setSlotXBoundsFromLeft(this.width / 2 - 4 - 200);
-        this.availableMobListGui.setSlotXBoundsFromLeft(this.width / 2);
-        //this.availablePotionListGui.setS
-        this.availableMobListGui.registerScrollButtons(7, 8);
     }
 
     private static List<IConfigElement> getConfigElements() {
@@ -76,6 +68,12 @@ public class MobSelectionGui extends GuiScreen {
 
     @Override
     public void initGui() {
+        this.availableMobListGui = new AvailableMobListGui(this.mc, 35, this.height - 30, this.width / 2 - 45, this.height, 36, this.availableMobs, returnInfo, index);
+        //this.availablePotionListGui.setSlotXBoundsFromLeft(this.width / 2 - 4 - 200);
+        this.availableMobListGui.setSlotXBoundsFromLeft(this.width / 2);
+        //this.availablePotionListGui.setS
+        this.availableMobListGui.registerScrollButtons(7, 8);
+
         this.buttonList.add(new GuiButton(3, 20, this.height - 25, (this.width - 25) / 4, 20, I18n.format("gui.done")));
     }
 
@@ -84,39 +82,41 @@ public class MobSelectionGui extends GuiScreen {
     {
         if (eventKey == Keyboard.KEY_ESCAPE) {
             EyesInTheShadows.debug("hit escape");
-            //mc.displayGuiScreen(new GuiEditArrayPotionID(parentScreen.owningScreen, configElement, slotIndex, currentValues, enabled()));
-            //this.mc.displayGuiScreen(parentScreen);
-            returnInfo.values[index] = originalValue;
-            mc.displayGuiScreen(new GuiEditArrayMobString(returnInfo.parentScreen, returnInfo.configElement, returnInfo.slotIndex, returnInfo.values, returnInfo.enabled));
+            actionCancelValues();
+            showParentScreen();
+        } else if (eventKey == Keyboard.KEY_RETURN) {
+            showParentScreen();
+        } else if (eventKey == Keyboard.KEY_DOWN) {
+            this.availableMobListGui.moveSelectionDown();
+        } else if (eventKey == Keyboard.KEY_UP) {
+            this.availableMobListGui.moveSelectionUp();
         } else {
-            EyesInTheShadows.debug(String.valueOf(index));
-            MobRenderTicker.setMob("Painting");
+            EyesInTheShadows.debug("Index: " + index);
+            EyesInTheShadows.debug("width: " + this.width + ", height: " + this.height);
         }
     }
 
     @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        if (button.id == 3)
-        {
-            mc.displayGuiScreen(new GuiEditArrayMobString(returnInfo.parentScreen, returnInfo.configElement, returnInfo.slotIndex, returnInfo.values, returnInfo.enabled));
+    protected void actionPerformed(GuiButton button) {
+        if (button.id == 3) {
+            showParentScreen();
         }
     }
 
 
-    public boolean hasSkinEntry(MobListEntry mobListEntry)
+    public boolean hasMobListEntry(MobListEntry mobListEntry)
     {
-        return this.availablePotions.contains(mobListEntry);
+        return this.availableMobs.contains(mobListEntry);
     }
 
-    public List probablyToRemove(MobListEntry skinListEntry)
+    public List probablyToRemove(MobListEntry mobListEntry)
     {
-        return this.hasSkinEntry(skinListEntry) ? this.availablePotions : null;
+        return this.hasMobListEntry(mobListEntry) ? this.availableMobs : null;
     }
 
-    public List getAvailablePotions()
+    public List getAvailableMobs()
     {
-        return this.availablePotions;
+        return this.availableMobs;
     }
 
 
@@ -148,34 +148,55 @@ public class MobSelectionGui extends GuiScreen {
 
         this.drawBackground(0);
 
-        this.availableMobListGui.top = 35;
+        //this.availableMobListGui.top = 35;
         this.availableMobListGui.left = 25;
-        this.availableMobListGui.bottom = this.height - 30;
-        this.availableMobListGui.right = this.width - 25;
+        //this.availableMobListGui.bottom = this.height - 30;
+        this.availableMobListGui.right = this.width / 2;
 
 
         this.availableMobListGui.drawScreen(mouseX, mouseY, partialTicks);
+        drawMobBackground(this.width / 2 + 15, 60, this.width / 2 - 70, this.height - 90);
         this.drawCenteredString(this.fontRendererObj, I18n.format(status), this.width / 2, 16, 16777215);
-        drawFooter(0);
+        drawFooter();
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
-    public void drawFooter(int p_146278_1_)
+    public void drawFooter()
     {
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_FOG);
+        float opaqueColor = 0.25098039215F;
+        GL11.glColor4f(opaqueColor, opaqueColor, opaqueColor, 1);
+        ClientUtil.drawModalRectWithCustomSizedTexture(mc, optionsBackground, 0, this.height - 30, this.width, 30, this.width / 32, 1);
+        GL11.glColor4f(1, 1, 1, 1);
+    }
+
+    public void actionCancelValues() {
+        returnInfo.values[index] = originalValue;
+    }
+
+    public void showParentScreen() {
+        mc.displayGuiScreen(new GuiEditArrayMobString(returnInfo.parentScreen, returnInfo.configElement, returnInfo.slotIndex, returnInfo.values, returnInfo.enabled));
+    }
+
+    public void drawMobBackground(int x, int y, int drawWidth, int drawHeight) {
+        this.mc.getTextureManager().bindTexture(mobBackground);
+
+        GL11.glEnable(GL11.GL_BLEND);
+
         Tessellator tessellator = Tessellator.instance;
-        this.mc.getTextureManager().bindTexture(optionsBackground);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        float f = 32.0F;
+        tessellator.setTranslation(0, 0, 0);
         tessellator.startDrawingQuads();
-        tessellator.setColorOpaque_I(4210752);
-        tessellator.addVertexWithUV(0.0D, this.height, 0.0D, 0.0D, ((float)this.height / f + (float)p_146278_1_));
-        tessellator.addVertexWithUV(this.width, this.height, 0.0D, ((float)this.width / f), ((float)this.height / f + (float)p_146278_1_));
-        //tessellator.addVertexWithUV(this.width, 0.0D, 0.0D, ((float)this.width / f), p_146278_1_);
-        //tessellator.addVertexWithUV(0.0D, 0.0D, 0.0D, 0.0D, p_146278_1_);
-        tessellator.addVertexWithUV(this.width, this.height - 30, 0.0D, 0, p_146278_1_);
-        tessellator.addVertexWithUV(0.0D, this.height - 30, 0.0D, 0.0D, p_146278_1_);
+
+        /* Ok so basically, the texture is a bit smaller than the size of the image itself.
+         * These values are passed to the tesselator and tell it how much of the image it should actually draw,
+         * in a 0 to 1 double (like a percentage). */
+        double textureWidth = 0.96875;
+        double textureHeight = 0.6484375;
+
+        tessellator.addVertexWithUV(x, (y + drawHeight), 0.0D, 0, textureHeight);
+        tessellator.addVertexWithUV((x + drawWidth), (y + drawHeight), 0.0D, textureWidth, textureHeight);
+        tessellator.addVertexWithUV((x + drawWidth), y, 0.0D, textureWidth, 0);
+        tessellator.addVertexWithUV(x, y, 0.0D, 0, 0);
         tessellator.draw();
+        GL11.glDisable(GL11.GL_BLEND);
     }
 }

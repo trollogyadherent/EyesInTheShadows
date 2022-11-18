@@ -133,12 +133,14 @@ public class MobRenderTicker
 
     public static void setMob(String mobString) {
         if (world == null) {
-            EyesInTheShadows.error("(setMob) world null");
+            EyesInTheShadows.debug("(setMob) world null");
+            mob = null;
             return;
         }
         Entity entity = EntityList.createEntityByName(mobString, world);
         if (!(entity instanceof EntityLivingBase)) {
-            EyesInTheShadows.error("(setMob) failed to create entity from \"" + mobString + "\"");
+            EyesInTheShadows.debug("(setMob) failed to create entity from \"" + mobString + "\"");
+            mob = null;
             return;
         }
 
@@ -199,38 +201,6 @@ public class MobRenderTicker
         entityBlacklist = new ArrayList();
         entityBlacklist.add("Mob");
         entityBlacklist.add("Monster");
-        entityBlacklist.add("EnderDragon");
-        entityBlacklist.add("Squid");
-        entityBlacklist.add("Ghast");
-        entityBlacklist.add("Bat");
-        entityBlacklist.add("CaveSpider");
-        entityBlacklist.add("Giant");
-        // Millenaire entities
-        entityBlacklist.add("MillBlaze");
-        entityBlacklist.add("MillGhast");
-        entityBlacklist.add("MillWitherSkeleton");
-        entityBlacklist.add("ml_GenericAsimmFemale");
-        entityBlacklist.add("ml_GenericSimmFemale");
-        entityBlacklist.add("ml_GenericVillager");
-
-        entityBlacklist.add("BiomesOPlenty.Phantom");
-        entityBlacklist.add("Forestry.butterflyGE");
-        entityBlacklist.add("TConstruct.Crystal");
-        entityBlacklist.add("Thaumcraft.Firebat");
-        entityBlacklist.add("Thaumcraft.TaintSpore");
-        entityBlacklist.add("Thaumcraft.TaintSwarm");
-        entityBlacklist.add("Thaumcraft.Taintacle");
-        entityBlacklist.add("Thaumcraft.TaintacleTiny");
-        entityBlacklist.add("Thaumcraft.Wisp");
-        entityBlacklist.add("TwilightForest.Boggard");
-        entityBlacklist.add("TwilightForest.Firefly");
-        entityBlacklist.add("TwilightForest.Helmet Crab");
-        entityBlacklist.add("TwilightForest.Hydra");
-        entityBlacklist.add("TwilightForest.HydraHead");
-        entityBlacklist.add("TwilightForest.Lower Goblin Knight");
-        entityBlacklist.add("TwilightForest.Mist Wolf");
-        entityBlacklist.add("TwilightForest.Mosquito Swarm");
-        entityBlacklist.add("TwilightForest.Upper Goblin Knight");
 
         // Get a COPY dumbass!
         entities = new TreeSet(EntityList.stringToClassMapping.keySet());
