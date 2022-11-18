@@ -1,4 +1,4 @@
-package trollogyadherent.eyesintheshadows.gui.configpickers.mob;
+package trollogyadherent.eyesintheshadows.configpickers.mob;
 
 import cpw.mods.fml.client.config.IConfigElement;
 import net.minecraft.client.Minecraft;
@@ -6,6 +6,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityList;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
@@ -21,9 +22,10 @@ public class MobSelectionGui extends GuiScreen {
     GuiEditArrayMobString.ReturnInfo returnInfo;
     int index;
     private List availablePotions;
-    private String status = "Please select a potion:";
+    private String status = "Please select a mob:";
     private AvailableMobListGui availableMobListGui;
-    int originalValue;
+    String originalValue;
+
     ResourceLocation potionResourceLocation = new ResourceLocation("textures/items/potion_bottle_empty.png");
     ResourceLocation potionSplashResourceLocation = new ResourceLocation("textures/items/potion_bottle_splash.png");
     ResourceLocation potionOverlayResourceLocation = new ResourceLocation("textures/items/potion_overlay.png");
@@ -45,17 +47,18 @@ public class MobSelectionGui extends GuiScreen {
         //this.status = I18n.format("offlineauth.skingui.select_skin");
 
         System.out.println(returnInfo.values[index]);
-        if (returnInfo.values[index] instanceof String) {
-            this.originalValue = Integer.parseInt((String) returnInfo.values[index]);
-        } else {
-            this.originalValue = (int)returnInfo.values[index];
-        }
+        this.originalValue = (String) returnInfo.values[index];
 
-        for (Potion p : Potion.potionTypes) {
+        /*for (Potion p : Potion.potionTypes) {
             if (p != null) {
                 MobListEntry entry = new MobListEntry(this, p);
                 this.availablePotions.add(entry);
             }
+        }*/
+
+        for (Object e : EntityList.stringToClassMapping.keySet()) {
+            MobListEntry entry = new MobListEntry(this, (String) e);
+            this.availablePotions.add(entry);
         }
 
         this.availableMobListGui = new AvailableMobListGui(this.mc, 410, this.height, 36, this.availablePotions, returnInfo, index);
@@ -87,6 +90,7 @@ public class MobSelectionGui extends GuiScreen {
             mc.displayGuiScreen(new GuiEditArrayMobString(returnInfo.parentScreen, returnInfo.configElement, returnInfo.slotIndex, returnInfo.values, returnInfo.enabled));
         } else {
             EyesInTheShadows.debug(String.valueOf(index));
+            MobRenderTicker.setMob("Painting");
         }
     }
 

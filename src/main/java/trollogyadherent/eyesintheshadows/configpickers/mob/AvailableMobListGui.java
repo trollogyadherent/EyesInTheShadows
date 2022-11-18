@@ -1,4 +1,4 @@
-package trollogyadherent.eyesintheshadows.gui.configpickers.mob;
+package trollogyadherent.eyesintheshadows.configpickers.mob;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
@@ -17,18 +17,18 @@ public class AvailableMobListGui extends GuiListExtended {
     int configListIndex;
     GuiEditArrayMobString.ReturnInfo returnInfo;
 
-    public AvailableMobListGui(Minecraft mc, int listWidth, int listHeight, int entryHeight, List potionEntries, GuiEditArrayMobString.ReturnInfo returnInfo, int index) {
+    public AvailableMobListGui(Minecraft mc, int listWidth, int listHeight, int entryHeight, List mobEntries, GuiEditArrayMobString.ReturnInfo returnInfo, int index) {
         super(mc, listWidth, listHeight, 32, listHeight - 55 + 4 , entryHeight);
         this.mc = mc;
-        this.potionEntries = potionEntries;
+        this.potionEntries = mobEntries;
         this.returnInfo = returnInfo;
         this.configListIndex = index;
         this.field_148163_i = false;
         //this.setHasListHeader(true, (int)((float)mc.fontRenderer.FONT_HEIGHT * 1.5F));
         this.setHasListHeader(false, 0);
         selectedIndex = -1;
-        for (int i = 0; i < potionEntries.size(); i++) {
-            if (((MobListEntry) potionEntries.get(i)).potion.getId() == (int)returnInfo.values[configListIndex]) {
+        for (int i = 0; i < mobEntries.size(); i++) {
+            if (((MobListEntry) mobEntries.get(i)).mobString.equals(returnInfo.values[configListIndex])) {
                 selectedIndex = i;
                 System.out.println("found index+ " + i);
             }
@@ -105,7 +105,8 @@ public class AvailableMobListGui extends GuiListExtended {
                     //this.func_148143_b(false);  //this thing blocks the ability to drag the scrollbar with the mouse
 
                     //OfflineAuth.varInstanceClient.skinGuiRenderTicker.setSkin(this.getListEntry_(l).skinName);
-                    returnInfo.values[configListIndex] = this.getListEntry_(l).potion.getId();
+                    returnInfo.values[configListIndex] = this.getListEntry_(l).mobString;
+                    MobRenderTicker.setMob(this.getListEntry_(l).mobString);
                     return true;
                 }
             }

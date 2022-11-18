@@ -5,6 +5,7 @@ import cpw.mods.fml.client.config.GuiEditArrayEntries;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.util.ResourceLocation;
 import trollogyadherent.eyesintheshadows.Tags;
+import trollogyadherent.eyesintheshadows.configpickers.mob.MobRenderTicker;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -33,6 +34,8 @@ public class VarInstanceClient {
 
     public float hmod = 0.15F;
     public float hmod2 = 0.25F;
+
+    public MobRenderTicker mobRenderTicker;
 
     public VarInstanceClient() {
         entryListField.setAccessible(true);

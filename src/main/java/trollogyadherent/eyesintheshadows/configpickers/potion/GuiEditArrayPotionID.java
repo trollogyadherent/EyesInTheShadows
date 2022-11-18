@@ -1,4 +1,4 @@
-package trollogyadherent.eyesintheshadows.gui.configpickers.potion;
+package trollogyadherent.eyesintheshadows.configpickers.potion;
 
 import cpw.mods.fml.client.config.*;
 import cpw.mods.fml.relauncher.ReflectionHelper;

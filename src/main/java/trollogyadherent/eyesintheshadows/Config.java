@@ -3,8 +3,8 @@ package trollogyadherent.eyesintheshadows;
 import cpw.mods.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import trollogyadherent.eyesintheshadows.gui.configpickers.mob.ArrayEntryMobString;
-import trollogyadherent.eyesintheshadows.gui.configpickers.potion.ArrayEntryPotionID;
+import trollogyadherent.eyesintheshadows.configpickers.mob.ArrayEntryMobString;
+import trollogyadherent.eyesintheshadows.configpickers.potion.ArrayEntryPotionID;
 import trollogyadherent.eyesintheshadows.util.Util;
 
 import java.io.File;

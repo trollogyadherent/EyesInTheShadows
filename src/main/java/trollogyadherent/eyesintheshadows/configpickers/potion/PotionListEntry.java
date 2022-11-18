@@ -1,4 +1,4 @@
-package trollogyadherent.eyesintheshadows.gui.configpickers.potion;
+package trollogyadherent.eyesintheshadows.configpickers.potion;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;

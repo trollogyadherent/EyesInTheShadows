@@ -1,29 +1,28 @@
-package trollogyadherent.eyesintheshadows.gui.configpickers.potion;
+package trollogyadherent.eyesintheshadows.configpickers.mob;
 
-import cpw.mods.fml.client.config.*;
+import cpw.mods.fml.client.config.GuiButtonExt;
+import cpw.mods.fml.client.config.GuiEditArray;
+import cpw.mods.fml.client.config.GuiEditArrayEntries;
+import cpw.mods.fml.client.config.IConfigElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.potion.Potion;
 import org.lwjgl.input.Keyboard;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
-import trollogyadherent.eyesintheshadows.util.PotionUtil;
-import trollogyadherent.eyesintheshadows.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /* The widget containing the potion list entries. it contains the + - buttons and the potion buttons. */
-public class GuiEditArrayEntriesPotionId extends GuiEditArrayEntries {
-    static GuiEditArrayPotionID owningGuiReflected;
+public class GuiEditArrayEntriesMobString extends GuiEditArrayEntries {
+    static GuiEditArrayMobString owningGuiReflected;
     public GuiEditArray parent;
     public GuiScreen parentScreen;
-    public static GuiEditArrayPotionID.ReturnInfo returnInfo;
-    public static GuiEditArrayEntriesPotionId this_;
+    public static GuiEditArrayMobString.ReturnInfo returnInfo;
+    public static GuiEditArrayEntriesMobString this_;
 
-    public GuiEditArrayEntriesPotionId(GuiScreen parentScreen, GuiEditArrayPotionID parent, Minecraft mc, IConfigElement configElement, Object[] beforeValues, Object[] currentValues, GuiEditArrayPotionID.ReturnInfo returnInfo) {
+    public GuiEditArrayEntriesMobString(GuiScreen parentScreen, GuiEditArrayMobString parent, Minecraft mc, IConfigElement configElement, Object[] beforeValues, Object[] currentValues, GuiEditArrayMobString.ReturnInfo returnInfo) {
         super(parent, mc, configElement, beforeValues, currentValues);
         EyesInTheShadows.debug("Constructing GuiEditArrayEntriesPotionId");
         this.parentScreen = parentScreen;
@@ -34,54 +33,41 @@ public class GuiEditArrayEntriesPotionId extends GuiEditArrayEntries {
         this_ = this;
 
         try {
-            owningGuiReflected = (GuiEditArrayPotionID) EyesInTheShadows.varInstanceClient.owningGuiField.get(this);
+            owningGuiReflected = (GuiEditArrayMobString) EyesInTheShadows.varInstanceClient.owningGuiField.get(this);
         } catch (IllegalAccessException e) {
             EyesInTheShadows.error("Failed to reflect");
             e.printStackTrace();
             return;
         }
         for (int i = 0; i < currentValues.length; i++) {
-            listEntries.add(new PotionEntry(parentScreen, owningGuiReflected, this, configElement, Integer.parseInt(currentValues[i].toString()), i));
+            listEntries.add(new MobEntry(parentScreen, owningGuiReflected, this, configElement, currentValues[i], i));
         }
         //for (Object value : currentValues)
 
-        listEntries.add(new BaseEntryPotionId(parentScreen, owningGuiReflected, this, configElement));
+        listEntries.add(new BaseEntryMobString(parentScreen, owningGuiReflected, this, configElement));
     }
 
     @Override
     public void addNewEntry(int index)
     {
-        PotionEntry potionEntry = new PotionEntry(parentScreen, owningGuiReflected, this, this.configElement, 0, currentValues.length);
-
-        //Object[] newArr = new Object[currentValues.length + 1];
-        //System.arraycopy(currentValues, 0, newArr, 0, currentValues.length);
-        //newArr[currentValues.length] = 0;
-
-        Object[] newArr = Util.addAtIndex(currentValues, index, 0);
-
+        MobEntry mobEntry = new MobEntry(parentScreen, owningGuiReflected, this, this.configElement, "None", currentValues.length);
+        Object[] newArr = new Object[currentValues.length + 1];
+        System.arraycopy(currentValues, 0, newArr, 0, currentValues.length);
+        newArr[currentValues.length] = "None";
         currentValues = newArr;
         returnInfo.values = newArr;
-        listEntries.add(index, potionEntry);
+        listEntries.add(index, mobEntry);
         this.canAddMoreEntries = !configElement.isListLengthFixed()
                 && (configElement.getMaxListLength() == -1 || this.listEntries.size() - 1 < configElement.getMaxListLength());
         keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
     }
 
-    @Override
-    public void removeEntry(int index)
-    {
-        Object[] newArr = Util.removeAtIndex(currentValues, index);
-        currentValues = newArr;
-        returnInfo.values = newArr;
-        super.removeEntry(index);
-    }
+    public static class BaseEntryMobString extends BaseEntry {
+        GuiEditArrayEntriesMobString owningEntriesMob;
 
-    public static class BaseEntryPotionId extends BaseEntry {
-        GuiEditArrayEntriesPotionId owningEntriesPotion;
-
-        public BaseEntryPotionId(GuiScreen parentScreen, GuiEditArray owningScreen, GuiEditArrayEntriesPotionId owningEntryList, IConfigElement configElement) {
+        public BaseEntryMobString(GuiScreen parentScreen, GuiEditArray owningScreen, GuiEditArrayEntriesMobString owningEntryList, IConfigElement configElement) {
             super(owningScreen, owningEntryList, configElement);
-            owningEntriesPotion = owningEntryList;
+            owningEntriesMob = owningEntryList;
         }
 
         @Override
@@ -96,12 +82,11 @@ public class GuiEditArrayEntriesPotionId extends GuiEditArrayEntries {
                 owningEntryList.recalculateState();
                 EyesInTheShadows.debug("after adding:");
                 EyesInTheShadows.debug(Arrays.toString(owningEntryList.currentValues));
-                owningGuiReflected.mc.displayGuiScreen(new PotionSelectionGui(owningGuiReflected, owningGuiReflected.beforeValuesReflected, owningGuiReflected.currentValuesReflected, index, returnInfo));
+                owningGuiReflected.mc.displayGuiScreen(new MobSelectionGui(owningGuiReflected, owningGuiReflected.beforeValuesReflected, owningGuiReflected.currentValuesReflected, index, returnInfo));
                 return true;
             }
             else if (this.btnRemoveEntry.mousePressed(owningEntryList.mc, x, y))
             {
-                EyesInTheShadows.debug("removing entry!");
                 btnRemoveEntry.func_146113_a(owningEntryList.mc.getSoundHandler());
                 owningEntryList.removeEntry(index);
                 owningEntryList.recalculateState();
@@ -112,13 +97,13 @@ public class GuiEditArrayEntriesPotionId extends GuiEditArrayEntries {
         }
     }
 
-    public static class GuiButtonExtPotion extends GuiButtonExt {
-        GuiEditArrayPotionID guiEditArrayPotionIDScreen;
-        GuiEditArrayEntriesPotionId owningEntryList;
+    public static class GuiButtonExtMob extends GuiButtonExt {
+        GuiEditArrayMobString guiEditArrayMobStringScreen;
+        GuiEditArrayEntriesMobString owningEntryList;
         int index;
-        public GuiButtonExtPotion(int id, int xPos, int yPos, int width, int height, String displayString, GuiEditArrayPotionID guiEditArrayPotionIDScreen, GuiEditArrayEntriesPotionId owningEntryList, int index) {
+        public GuiButtonExtMob(int id, int xPos, int yPos, int width, int height, String displayString, GuiEditArrayMobString guiEditArrayMobStringScreen, GuiEditArrayEntriesMobString owningEntryList, int index) {
             super(id, xPos, yPos, width, height, displayString);
-            this.guiEditArrayPotionIDScreen = guiEditArrayPotionIDScreen;
+            this.guiEditArrayMobStringScreen = guiEditArrayMobStringScreen;
             this.owningEntryList = owningEntryList;
             this.index = index;
         }
@@ -131,30 +116,24 @@ public class GuiEditArrayEntriesPotionId extends GuiEditArrayEntries {
                 EyesInTheShadows.debug("currentValues before saving:");
                 EyesInTheShadows.debug(Arrays.toString(owningGuiReflected.currentValuesReflected));
                 owningGuiReflected.actionSave();
-                guiEditArrayPotionIDScreen.mc.displayGuiScreen(new PotionSelectionGui(guiEditArrayPotionIDScreen, owningGuiReflected.beforeValuesReflected, owningGuiReflected.currentValuesReflected, index, returnInfo));
+                guiEditArrayMobStringScreen.mc.displayGuiScreen(new MobSelectionGui(guiEditArrayMobStringScreen, owningGuiReflected.beforeValuesReflected, owningGuiReflected.currentValuesReflected, index, returnInfo));
             }
         }
     }
 
-    public static class PotionEntry extends BaseEntryPotionId {
+    public static class MobEntry extends BaseEntryMobString {
         protected final GuiTextField textFieldValue;
-        Potion potion;
         GuiButtonExt btn;
         String displayValue;
         int index;
-        public PotionEntry(GuiScreen parentScreen, GuiEditArrayPotionID owningScreen, GuiEditArrayEntriesPotionId owningEntryList, IConfigElement configElement, Object value, int index) {
+        public MobEntry(GuiScreen parentScreen, GuiEditArrayMobString owningScreen, GuiEditArrayEntriesMobString owningEntryList, IConfigElement configElement, Object value, int index) {
             super(parentScreen, owningScreen, owningEntryList, configElement);
 
             this.index = index;
 
-            potion = PotionUtil.getPotionById(Integer.parseInt(value.toString()));
-            if (potion == null) {
-                displayValue = "None";
-            } else {
-                displayValue = value + ": " + I18n.format(potion.getName());
-            }
+            displayValue = String.valueOf(value);
 
-            this.btn = new GuiButtonExtPotion(69, owningEntryList.width / 4 + 10, 0, owningEntryList.width / 3 + 1, 18, displayValue, owningScreen, owningEntryList, index);
+            this.btn = new GuiButtonExtMob(69, owningEntryList.width / 4 + 10, 0, owningEntryList.width / 3 + 1, 18, displayValue, owningScreen, owningEntryList, index);
             this.textFieldValue = new GuiTextField(owningEntryList.mc.fontRenderer, owningEntryList.width / 4 + 1, 0, owningEntryList.controlWidth - 3, 16);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(value.toString());
