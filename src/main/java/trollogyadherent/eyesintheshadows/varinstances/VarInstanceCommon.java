@@ -1,5 +1,6 @@
 package trollogyadherent.eyesintheshadows.varinstances;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -17,8 +18,11 @@ public class VarInstanceCommon {
     public Field superTargetEntityField = ReflectionHelper.findField(EntityAINearestAttackableTarget.class, "field_75309_a", "targetEntity");
     public Field speedTowardsTargetField = ReflectionHelper.findField(EntityAIAttackOnCollide.class, "field_75440_e", "speedTowardsTarget");
 
+    public boolean witcheryLoaded;
+
     public VarInstanceCommon() {
         superTargetEntityField.setAccessible(true);
         speedTowardsTargetField.setAccessible(true);
+        witcheryLoaded = Loader.isModLoaded("witchery");
     }
 }

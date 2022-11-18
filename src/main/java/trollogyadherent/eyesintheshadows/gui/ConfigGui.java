@@ -10,6 +10,7 @@ import net.minecraftforge.common.config.ConfigElement;
 import trollogyadherent.eyesintheshadows.Config;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
 import trollogyadherent.eyesintheshadows.Tags;
+import trollogyadherent.eyesintheshadows.util.MobUtil;
 
 public class ConfigGui extends GuiConfig {
 
@@ -48,6 +49,7 @@ public class ConfigGui extends GuiConfig {
         if (b.id == 2000) {
             /* Syncing config */
             Config.synchronizeConfigurationClient(EyesInTheShadows.confFile, true, false);
+            MobUtil.test();
         }
     }
 

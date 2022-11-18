@@ -1,4 +1,4 @@
-package trollogyadherent.eyesintheshadows.gui;
+package trollogyadherent.eyesintheshadows.gui.configpickers.mob;
 
 import cpw.mods.fml.client.config.*;
 import cpw.mods.fml.relauncher.ReflectionHelper;
@@ -14,18 +14,18 @@ import static cpw.mods.fml.client.config.GuiUtils.UNDO_CHAR;
 
 /* This is the gui with the list (contains the potion buttons, and + - buttons) */
 
-public class GuiEditArrayPotionID extends GuiEditArray {
+public class GuiEditArrayMobString extends GuiEditArray {
     public Object[] beforeValuesReflected;
     public Object[] currentValuesReflected;
     Method saveListChangesMethod;
     public GuiConfig parentGuiConfigScreen;
     public Object[] thisCurrentValues;
 
-    public GuiEditArrayPotionID(GuiConfig parentScreen, IConfigElement configElement, int slotIndex, Object[] currentValues, boolean enabled) {
+    public GuiEditArrayMobString(GuiConfig parentScreen, IConfigElement configElement, int slotIndex, Object[] currentValues, boolean enabled) {
         super(parentScreen, configElement, slotIndex, currentValues, enabled);
         parentGuiConfigScreen = parentScreen;
         thisCurrentValues = currentValues;
-        EyesInTheShadows.debug("Constructing GuiEditArrayPotionID");
+        EyesInTheShadows.debug("Constructing GuiEditArrayMobString");
     }
 
     public static class ReturnInfo {
@@ -54,7 +54,7 @@ public class GuiEditArrayPotionID extends GuiEditArray {
             //super.entryList = new GuiEditArrayEntriesPotionId(this, this.mc, this.configElement, beforeValuesReflected, currentValuesReflected);
 
             /* Adding the widget containing the potion list items */
-            EyesInTheShadows.varInstanceClient.entryListField.set(this, new GuiEditArrayEntriesPotionId(parentScreen, this, this.mc, this.configElement, beforeValuesReflected, currentValuesReflected, new ReturnInfo(parentGuiConfigScreen, configElement, slotIndex, enabled, thisCurrentValues)));
+            EyesInTheShadows.varInstanceClient.entryListField.set(this, new GuiEditArrayEntriesMobString(parentScreen, this, this.mc, this.configElement, beforeValuesReflected, currentValuesReflected, new ReturnInfo(parentGuiConfigScreen, configElement, slotIndex, enabled, thisCurrentValues)));
         } catch (IllegalAccessException e) {
             EyesInTheShadows.error("Failed to reflect");
             e.printStackTrace();
@@ -115,7 +115,7 @@ public class GuiEditArrayPotionID extends GuiEditArray {
             //this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
             Object[] beforeValues = (Object[])EyesInTheShadows.varInstanceClient.beforeValuesField.get(this);
             Object[] currentValues = (Object[])EyesInTheShadows.varInstanceClient.currentValuesField.get(this);
-            EyesInTheShadows.varInstanceClient.entryListField.set(this, new GuiEditArrayEntriesPotionId(parentScreen, this, this.mc, this.configElement, beforeValues, currentValues, new ReturnInfo(parentGuiConfigScreen, configElement, slotIndex, enabled, thisCurrentValues)));
+            EyesInTheShadows.varInstanceClient.entryListField.set(this, new GuiEditArrayEntriesMobString(parentScreen, this, this.mc, this.configElement, beforeValues, currentValues, new ReturnInfo(parentGuiConfigScreen, configElement, slotIndex, enabled, thisCurrentValues)));
         } catch (IllegalAccessException e) {
             EyesInTheShadows.error("Failed to reflect fields! (1) (GuiEditArrayPotionID)");
             e.printStackTrace();
@@ -127,7 +127,7 @@ public class GuiEditArrayPotionID extends GuiEditArray {
         try {
             //this.entryList.saveListChanges();
             GuiEditArrayEntries entryList = (GuiEditArrayEntries)EyesInTheShadows.varInstanceClient.entryListField.get(this);
-            saveListChangesMethod  = ReflectionHelper.findMethod(cpw.mods.fml.client.config.GuiEditArrayEntries.class, entryList, new String[]{"saveListChanges"});
+            saveListChangesMethod  = ReflectionHelper.findMethod(GuiEditArrayEntries.class, entryList, new String[]{"saveListChanges"});
             saveListChangesMethod.invoke(entryList);
         }
         catch (Throwable e) {

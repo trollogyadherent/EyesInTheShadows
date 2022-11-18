@@ -1,4 +1,4 @@
-package trollogyadherent.eyesintheshadows.gui;
+package trollogyadherent.eyesintheshadows.gui.configpickers.mob;
 
 import cpw.mods.fml.client.config.GuiConfig;
 import cpw.mods.fml.client.config.GuiConfigEntries;
@@ -8,15 +8,15 @@ import trollogyadherent.eyesintheshadows.EyesInTheShadows;
 import java.util.Arrays;
 
 /* The button that opens the potion array gui */
-public class ArrayEntryPotionID extends GuiConfigEntries.ArrayEntry {
-    public ArrayEntryPotionID(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
+public class ArrayEntryMobString extends GuiConfigEntries.ArrayEntry {
+    public ArrayEntryMobString(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
         super(owningScreen, owningEntryList, configElement);
     }
 
     @Override
     public void valueButtonPressed(int slotIndex)
     {
-        mc.displayGuiScreen(new GuiEditArrayPotionID(this.owningScreen, configElement, slotIndex, currentValues, enabled()));
+        mc.displayGuiScreen(new GuiEditArrayMobString(this.owningScreen, configElement, slotIndex, currentValues, enabled()));
     }
 
     @Override

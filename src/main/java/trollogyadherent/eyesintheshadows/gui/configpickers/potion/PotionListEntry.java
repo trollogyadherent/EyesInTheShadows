@@ -1,11 +1,9 @@
-package trollogyadherent.eyesintheshadows.gui;
+package trollogyadherent.eyesintheshadows.gui.configpickers.potion;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.potion.Potion;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import trollogyadherent.eyesintheshadows.util.ClientUtil;
 import trollogyadherent.eyesintheshadows.util.Util;
@@ -21,22 +19,10 @@ public class PotionListEntry {
         this.previous = potionSelectionGui;
         this.potion = potion;
         this.mc = Minecraft.getMinecraft();
-
-        // TODO display the potion bottle
-        //skinResourceLocation = new ResourceLocation("offlineauth", "skinlistentryskins/" + skinName);
     }
 
     public void drawEntry(int p_148279_1_, int p_148279_2_, int p_148279_3_, int p_148279_4_, int p_148279_5_, Tessellator p_148279_6_, int p_148279_7_, int p_148279_8_, boolean p_148279_9_)
     {
-        /*this.bindIcon();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        int l2 = 8;
-        int i3 = 8;
-
-        Gui.func_152125_a(p_148279_2_, p_148279_3_, 8.0F, (float) l2, 8, i3, 32, 32, 64.0F, 64.0F);
-
-         */
-
         int color  = potion.getLiquidColor();
         int r = (color >> 16)&255;
         int g = (color >> 8)&255;
@@ -51,12 +37,6 @@ public class PotionListEntry {
 
         GL11.glColor4f(1, 1, 1, 1);
         ClientUtil.drawModalRectWithCustomSizedTexture(mc, previous.potionResourceLocation, p_148279_2_, p_148279_3_, 32, 32, 1, 1);
-        /*if (potion.isInstant()) {
-            ClientUtil.drawModalRectWithCustomSizedTexture(mc, previous.potionSplashResourceLocation, p_148279_2_, p_148279_3_, 32, 32, 1, 1);
-        } else {
-            ClientUtil.drawModalRectWithCustomSizedTexture(mc, previous.potionResourceLocation, p_148279_2_, p_148279_3_, 32, 32, 1, 1);
-        }*/
-
 
         int i2;
         String s = this.getPotionName();
@@ -92,19 +72,19 @@ public class PotionListEntry {
         this.mc.getTextureManager().bindTexture(previous.potionResourceLocation); //bindTexturePackIcon(this.field_148317_a.getTextureManager());
     }
 
-    protected boolean func_148310_d()
+    protected boolean showHoverOverlay()
     {
         return true;
     }
 
     protected boolean func_148309_e()
     {
-        return !this.previous.hasSkinEntry(this);
+        return !this.previous.hasPotionListEntry(this);
     }
 
     protected boolean func_148308_f()
     {
-        return this.previous.hasSkinEntry(this);
+        return this.previous.hasPotionListEntry(this);
     }
 
     /*protected boolean func_148314_g()
@@ -126,7 +106,7 @@ public class PotionListEntry {
      */
     public boolean mousePressed(int p_148278_1_, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_)
     {
-        if (this.func_148310_d() /*&& p_148278_5_ <= 32 */)
+        if (this.showHoverOverlay() /*&& p_148278_5_ <= 32 */)
         {
             return true;
         }

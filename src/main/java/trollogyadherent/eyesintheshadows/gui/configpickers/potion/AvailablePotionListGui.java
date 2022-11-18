@@ -1,11 +1,11 @@
-package trollogyadherent.eyesintheshadows.gui;
+package trollogyadherent.eyesintheshadows.gui.configpickers.potion;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 
@@ -18,22 +18,56 @@ public class AvailablePotionListGui extends GuiListExtended {
     int configListIndex;
     GuiEditArrayPotionID.ReturnInfo returnInfo;
 
-    public AvailablePotionListGui(Minecraft mc, int listWidth, int listHeight, int entryHeight, List potionEntries, GuiEditArrayPotionID.ReturnInfo returnInfo, int index) {
-        super(mc, listWidth, listHeight, 32, listHeight - 55 + 4 , entryHeight);
+    public AvailablePotionListGui(Minecraft mc, int top, int bottom, int listWidth, int listHeight, int entryHeight, List potionEntries, GuiEditArrayPotionID.ReturnInfo returnInfo, int index) {
+        super(mc, listWidth, listHeight, top, bottom, entryHeight);
         this.mc = mc;
         this.potionEntries = potionEntries;
         this.returnInfo = returnInfo;
         this.configListIndex = index;
         this.field_148163_i = false;
+        this.top = top;
+        this.bottom = bottom;
         //this.setHasListHeader(true, (int)((float)mc.fontRenderer.FONT_HEIGHT * 1.5F));
         this.setHasListHeader(false, 0);
-        selectedIndex = 0;
+        selectedIndex = -1;
         for (int i = 0; i < potionEntries.size(); i++) {
-            if (((PotionListEntry) potionEntries.get(i)).potion.getId() == (int)returnInfo.values[configListIndex]) {
-                selectedIndex = i;
+            int intVal;
+            if (returnInfo.values[configListIndex] instanceof String) {
+                intVal = Integer.parseInt((String) returnInfo.values[configListIndex]);
+            } else {
+                intVal = (int)returnInfo.values[configListIndex];
+            }
+            if (((PotionListEntry) potionEntries.get(i)).potion.getId() == intVal) {
+                //selectedIndex = i;
+                selectEntry(i, true);
                 System.out.println("found index+ " + i);
             }
         }
+    }
+
+    public void moveSelectionUp() {
+        selectEntry(selectedIndex - 1, true);
+    }
+
+    public void moveSelectionDown() {
+        selectEntry(selectedIndex + 1, true);
+    }
+
+    public void selectEntry(int index, boolean doScroll) {
+        if (index < 0 || index >= getSize()) {
+            return;
+        }
+        if (doScroll) {
+            scrollTo(index);
+        }
+        selectedIndex = index;
+        returnInfo.values[configListIndex] = this.getListEntry_(index).potion.getId();
+    }
+
+    public void scrollTo(int index) {
+        int yPos = (index + 1) * slotHeight - getAmountScrolled();
+        int h = bottom - top;
+        scrollBy(yPos - h / 2);
     }
 
     protected void drawListHeader(int par1, int par2, Tessellator tessellator) {
@@ -63,6 +97,10 @@ public class AvailablePotionListGui extends GuiListExtended {
     public int getListWidth()
     {
         return this.width;
+    }
+
+    public void setListWidth(int width) {
+        this.width = width;
     }
 
     protected int getScrollBarX()
@@ -101,12 +139,7 @@ public class AvailablePotionListGui extends GuiListExtended {
 
                 if (this.getListEntry_(l).mousePressed(l, p_148179_1_, p_148179_2_, p_148179_3_, k1, l1))
                 {
-                    //System.out.println("hmm: " + this.getListEntry_(l).skinName);
-                    this.selectedIndex = l;
-                    //this.func_148143_b(false);  //this thing blocks the ability to drag the scrollbar with the mouse
-
-                    //OfflineAuth.varInstanceClient.skinGuiRenderTicker.setSkin(this.getListEntry_(l).skinName);
-                    returnInfo.values[configListIndex] = this.getListEntry_(l).potion.getId();
+                    selectEntry(l, false);
                     return true;
                 }
             }
@@ -130,5 +163,4 @@ public class AvailablePotionListGui extends GuiListExtended {
         this.func_148143_b(true);
         return false;
     }
-
 }

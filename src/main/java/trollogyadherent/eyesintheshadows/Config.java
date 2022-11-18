@@ -3,7 +3,8 @@ package trollogyadherent.eyesintheshadows;
 import cpw.mods.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import trollogyadherent.eyesintheshadows.gui.ArrayEntryPotionID;
+import trollogyadherent.eyesintheshadows.gui.configpickers.mob.ArrayEntryMobString;
+import trollogyadherent.eyesintheshadows.gui.configpickers.potion.ArrayEntryPotionID;
 import trollogyadherent.eyesintheshadows.util.Util;
 
 import java.io.File;
@@ -46,6 +47,7 @@ public class Config {
         public static final boolean eyesWander = true;
         public static final boolean printPotions = false;
         public static final int[] potionIds = {};
+        public static final String[] mobStringsAttacking = {};
     }
 
     public static class Categories {
@@ -92,6 +94,7 @@ public class Config {
     public static boolean eyesWander = Defaults.eyesWander;
     public static boolean printPotions = Defaults.printPotions;
     public static int[] potionIds = Defaults.potionIds;
+    public static String[] mobStringsAttacking = Defaults.mobStringsAttacking;
 
     public static void synchronizeConfigurationClient(File configFile, boolean force, boolean load) {
         if (!loaded || force) {
@@ -117,6 +120,12 @@ public class Config {
                 potionIdsProperty.setConfigEntryClass(ArrayEntryPotionID.class);
             }
             potionIds = potionIdsProperty.getIntList();
+
+            Property mobStringsAttackingProperty = config.get(Categories.misc, "mobStrings", Defaults.mobStringsAttacking, "List of mobs that should attack Eyes.");
+            if (!Util.isServer()) {
+                mobStringsAttackingProperty.setConfigEntryClass(ArrayEntryMobString.class);
+            }
+            mobStringsAttacking = mobStringsAttackingProperty.getStringList();
         }
         if(config.hasChanged()) {
             config.save();
@@ -135,6 +144,9 @@ public class Config {
 
             Property potionIdsProperty = config.get(Categories.misc, "potionIds", Defaults.potionIds, "List of potion effect id's that should be applied to a player attacked by Eyes.");
             potionIds = potionIdsProperty.getIntList();
+
+            Property mobStringsAttackingProperty = config.get(Categories.misc, "mobStrings", Defaults.mobStringsAttacking, "List of mobs that should attack Eyes.");
+            mobStringsAttacking = mobStringsAttackingProperty.getStringList();
 
             synchronizeConfigurationCommon();
         }
