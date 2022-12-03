@@ -7,7 +7,6 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
-import trollogyadherent.eyesintheshadows.configpickers.mob.MobRenderTicker;
 import trollogyadherent.eyesintheshadows.event.ClientEventHandler;
 import trollogyadherent.eyesintheshadows.client.EyesRenderer;
 import trollogyadherent.eyesintheshadows.client.ModelEyes;
@@ -20,6 +19,7 @@ public class ClientProxy extends CommonProxy {
     // etc, and register them with the GameRegistry."
     public void preInit(FMLPreInitializationEvent event) 	{
         EyesInTheShadows.varInstanceClient = new VarInstanceClient();
+        EyesInTheShadows.varInstanceClient.preInitHook();
 
         RenderingRegistry.registerEntityRenderingHandler(EntityEyes.class, new EyesRenderer(new ModelEyes(), 0.5F));
 
@@ -37,8 +37,7 @@ public class ClientProxy extends CommonProxy {
     // postInit "Handle interaction with other mods, complete your setup based on this."
     public void postInit(FMLPostInitializationEvent event) {
         super.postInit(event);
-        EyesInTheShadows.varInstanceClient.mobRenderTicker = new MobRenderTicker();
-        EyesInTheShadows.varInstanceClient.mobRenderTicker.register();
+        EyesInTheShadows.varInstanceClient.postInitHook();
     }
 
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {

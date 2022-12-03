@@ -15,4 +15,6 @@ dependencies {
     //compile(deobfCurse("custom-main-menu-226406:2264779"))
     shadowImplementation('com.eclipsesource.minimal-json:minimal-json:0.9.5')
     shadowImplementation("org.l33tlabs.twl:pngdecoder:1.0")
+
+    compile fileTree(dir: 'libs', include: '*.jar')
 }

@@ -14,6 +14,6 @@ public class AvoidOcelots extends EntityAIAvoidEntity {
 
     @Override
     public boolean shouldExecute() {
-        return Config.eyesFleeOcelots && eyes.getBrightness() > 0 && super.shouldExecute();
+        return false;//Config.eyesFleeOcelots && eyes.getBrightness() > 0 && super.shouldExecute();
     }
 }

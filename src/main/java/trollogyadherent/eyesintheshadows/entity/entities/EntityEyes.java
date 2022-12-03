@@ -2,6 +2,7 @@ package trollogyadherent.eyesintheshadows.entity.entities;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
@@ -34,6 +35,9 @@ import java.util.List;
 
 public class EntityEyes extends EntityMob implements IModEntity {
     private NBTTagCompound syncDataCompound = new NBTTagCompound();
+
+    private float heightOffset = 0.5F;
+    private int heightOffsetUpdateTime;
 
     public EntityEyes(World world) {
         super(world);
@@ -98,9 +102,11 @@ public class EntityEyes extends EntityMob implements IModEntity {
     @Override
     public void setupAI() {
         this.getNavigator().setAvoidsWater(true);
-        this.tasks.addTask(3, new AvoidOcelots(this, EntityOcelot.class, 6.0F, 1.0D, 1.2D));
-        this.targetTasks.addTask(2, new TargetTamedWolves(this, EntityWolf.class, 0, false));
+        //this.tasks.addTask(3, new AvoidOcelots(this, EntityOcelot.class, 6.0F, 1.0D, 1.2D));
+
+        this.targetTasks.addTask(3, new TargetTamedWolves(this, EntityWolf.class, 0, false));
         this.tasks.addTask(4, new EntityAIAttackOnCollide(this, EntityWolf.class, 1.0D, true));
+
         this.targetTasks.addTask(1, new EntityAINearestAttackableTarget(this, EntityPlayerMP.class, 0, false));
         this.tasks.addTask(1, new CreepTowardPlayer(this, 0.25D, false));
         this.tasks.addTask(5, new EyesWander(this, 1.0D));
@@ -110,6 +116,14 @@ public class EntityEyes extends EntityMob implements IModEntity {
           this.tasks.addTask(1, new EntityAIRestrictSun(this));
           this.tasks.addTask(2, new EntityAIFleeSun(this, 1.0D));
         */
+
+        for (Class c : EyesInTheShadows.varInstanceCommon.entitiesAttackedByEyesList) {
+            this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, c, 0, false));
+            this.tasks.addTask(4, new EntityAIAttackOnCollide(this, c, 1.0D, true));
+        }
+        for (Class c : EyesInTheShadows.varInstanceCommon.entitiesThatEyesFleeList) {
+            this.tasks.addTask(3, new EntityAIAvoidEntity(this, c, 6.0F, 1.0D, 1.2D));
+        }
     }
 
     @Override
@@ -149,6 +163,8 @@ public class EntityEyes extends EntityMob implements IModEntity {
         // retrieve additional custom variables from save, example: setAngry(par1NBTTagCompound.getBoolean("Angry"));
     }
 
+    protected void fall(float p_70069_1_) {}
+
     /**
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
@@ -156,6 +172,29 @@ public class EntityEyes extends EntityMob implements IModEntity {
     @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
+
+        if (!this.worldObj.isRemote)
+        {
+            if (this.isWet()) {
+                //this.attackEntityFrom(DamageSource.drown, 1.0F);
+            }
+
+            --this.heightOffsetUpdateTime;
+
+            if (this.heightOffsetUpdateTime <= 0) {
+                this.heightOffsetUpdateTime = 100;
+                this.heightOffset = 0.5F + (float)this.rand.nextGaussian() * 3.0F;
+            }
+
+            if (this.getAttackTarget() != null && this.getAttackTarget().posY + (double)this.getAttackTarget().getEyeHeight() > this.posY + (double)this.getEyeHeight() + (double)this.heightOffset) {
+                this.motionY += (0.30000001192092896D - this.motionY) * 0.30000001192092896D;
+            }
+        }
+
+        if (!this.onGround && this.motionY < 0.0D) {
+            this.motionY *= 0.6D;
+        }
+
         float alpha = Util.getEyeRenderingAlpha(this, Config.eyesCanAttackWhileLit);
 
         setEyeBrightness(alpha);
@@ -207,9 +246,8 @@ public class EntityEyes extends EntityMob implements IModEntity {
             }
         }
 
-        if (Config.enableEyeAggressionEscalation && alpha > 0)
-        {
-            if (!isPlayerLookingInMyGeneralDirection()) {
+        if (Config.enableEyeAggressionEscalation && alpha > 0) {
+            if (!isPlayerLookingInMyGeneralDirection() && this.getAttackTarget() != null) {
                 setAggroLevel(getAggroLevel() + Config.aggroEscalationPerTick);
                 if (Config.eyeAggressionDependsOnLightLevel) {
                     setAggroLevel(getAggroLevel() + Config.aggroEscalationPerTick * alpha);
@@ -236,7 +274,11 @@ public class EntityEyes extends EntityMob implements IModEntity {
      */
     @Override
     public boolean attackEntityFrom(DamageSource par1DamageSource, float par2) {
+        return false;
+        //disappear(false);
+        //return true;
 
+        /*
         // DEBUG!!!!!
         if (par1DamageSource.getEntity() instanceof EntityPlayerMP && EyesInTheShadows.isDebugMode()) {
             jumpscare((EntityPlayerMP) par1DamageSource.getEntity());
@@ -246,13 +288,9 @@ public class EntityEyes extends EntityMob implements IModEntity {
             return false;
         } else {
 
-            /* if (entity != null && !(entity instanceof EntityPlayer) && !(entity instanceof EntityArrow))
-            {
-                par2 = (par2 + 1.0F) / 2.0F;
-            } */
 
             return super.attackEntityFrom(par1DamageSource, par2);
-        }
+        }*/
     }
 
     @Override

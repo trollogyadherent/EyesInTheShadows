@@ -34,7 +34,7 @@ public class CreepTowardPlayer extends EntityAIAttackOnCollide {
     @Override
     public void updateTask() {
         double speed = eyes.getSpeedFromAggro();
-        System.out.println("aggro: " + eyes.getAggroLevel() + ", speed: " + speed);
+        //EyesInTheShadows.debug("aggro: " + eyes.getAggroLevel() + ", speed: " + speed);
         try {
             EyesInTheShadows.varInstanceCommon.speedTowardsTargetField.set(this, speed);
         } catch (IllegalAccessException e) {

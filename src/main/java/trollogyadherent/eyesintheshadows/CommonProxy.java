@@ -1,5 +1,6 @@
 package trollogyadherent.eyesintheshadows;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -8,6 +9,7 @@ import net.minecraftforge.common.MinecraftForge;
 import trollogyadherent.eyesintheshadows.entity.entities.EntityEyes;
 import trollogyadherent.eyesintheshadows.event.CommonEventHandler;
 import trollogyadherent.eyesintheshadows.packet.PacketHandler;
+import trollogyadherent.eyesintheshadows.util.MobUtil;
 import trollogyadherent.eyesintheshadows.util.PotionUtil;
 import trollogyadherent.eyesintheshadows.util.Util;
 import trollogyadherent.eyesintheshadows.varinstances.VarInstanceCommon;
@@ -44,14 +46,17 @@ public class CommonProxy {
 
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes."
     public void init(FMLInitializationEvent event) {
-
     }
 
     // postInit "Handle interaction with other mods, complete your setup based on this."
     public void postInit(FMLPostInitializationEvent event) {
         if (Config.printPotions) {
-            PotionUtil.printPotionIds();
+            PotionUtil.printPotionNames();
         }
+        if (Config.printMobs) {
+            MobUtil.printMobNames();
+        }
+        EyesInTheShadows.varInstanceCommon.postInitHook();
     }
 
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {

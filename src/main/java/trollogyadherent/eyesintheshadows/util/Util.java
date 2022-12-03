@@ -213,7 +213,9 @@ public class Util {
         WHITE,
         GREY,
         DARKGREY,
-        BLACK
+        BLACK,
+
+        RESET
     }
 
     public static String colorCode(Color color) {
@@ -234,6 +236,7 @@ public class Util {
             put(Color.GREY, "7");
             put(Color.DARKGREY, "8");
             put(Color.BLACK, "0");
+            put(Color.RESET, "r");
 
         }};
         return (char) 167 + colorMap.get(color);

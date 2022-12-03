@@ -32,7 +32,7 @@ public class TargetEyesTamed extends EntityAITargetTamed {
         if (!(entityLivingBase instanceof EntityEyes)) {
             return false;
         }
-        if (((EntityEyes)entityLivingBase).getBrightness() <= 0 && !Config.wolvesAttackDormantEyes) {
+        if (((EntityEyes)entityLivingBase).getBrightness() <= 0 && !Config.mobssAttackDormantEyes) {
             return false;
         }
         return superShouldExecute;

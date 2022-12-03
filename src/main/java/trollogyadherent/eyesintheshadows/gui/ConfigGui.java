@@ -18,10 +18,12 @@ public class ConfigGui extends GuiConfig {
     private static IConfigElement ceAggro = new ConfigElement(Config.config.getCategory(Config.Categories.eye_aggression));
     private static IConfigElement ceSpawning = new ConfigElement(Config.config.getCategory(Config.Categories.spawning));
     private static IConfigElement ceMisc = new ConfigElement(Config.config.getCategory(Config.Categories.misc));
+    private static IConfigElement ceMobInteractions = new ConfigElement(Config.config.getCategory(Config.Categories.mob_interactions));
+    private static IConfigElement ceVisual = new ConfigElement(Config.config.getCategory(Config.Categories.visual));
 
     public ConfigGui(GuiScreen parent) {
         //this.parentScreen = parent;
-        super(parent, ImmutableList.of(ceGeneral, ceAggro, ceSpawning, ceMisc), Tags.MODID, Tags.MODID, false, false, I18n.format(Tags.MODID + ".configgui.title"), EyesInTheShadows.confFile.getAbsolutePath());
+        super(parent, ImmutableList.of(ceGeneral, ceAggro, ceSpawning, ceMobInteractions, ceVisual, ceMisc), Tags.MODID, Tags.MODID, false, false, I18n.format(Tags.MODID + ".configgui.title"), EyesInTheShadows.confFile.getAbsolutePath());
         EyesInTheShadows.debug("Instantiating config gui");
     }
 
@@ -49,7 +51,6 @@ public class ConfigGui extends GuiConfig {
         if (b.id == 2000) {
             /* Syncing config */
             Config.synchronizeConfigurationClient(EyesInTheShadows.confFile, true, false);
-            MobUtil.test();
         }
     }
 

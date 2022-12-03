@@ -22,10 +22,6 @@ public class ClientEventHandler {
             } else if (lastPressedKey == Keyboard.KEY_R) {
                 lastPressedKey = -1;
 
-                Potion p = PotionUtil.getPotionById(1);
-                if (p != null)
-                    EyesInTheShadows.debug(p.toString());
-
                 /*int x = MathHelper.floor_double(e.player.posX) + EyesInTheShadows.varInstanceClient.xmod;
                 int y = MathHelper.floor_double(e.player.posY) + EyesInTheShadows.varInstanceClient.ymod;
                 int z = MathHelper.floor_double(e.player.posZ) + EyesInTheShadows.varInstanceClient.zmod;
