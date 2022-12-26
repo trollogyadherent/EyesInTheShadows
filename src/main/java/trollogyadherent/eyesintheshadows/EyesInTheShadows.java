@@ -4,7 +4,6 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
 import org.apache.logging.log4j.Logger;
-import trollogyadherent.eyesintheshadows.util.XSTR;
 import trollogyadherent.eyesintheshadows.varinstances.VarInstanceClient;
 import trollogyadherent.eyesintheshadows.varinstances.VarInstanceCommon;
 import trollogyadherent.eyesintheshadows.varinstances.VarInstanceServer;

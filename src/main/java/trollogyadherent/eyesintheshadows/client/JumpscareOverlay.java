@@ -13,6 +13,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Rectangle;
+import trollogyadherent.eyesintheshadows.Config;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
 
 public class JumpscareOverlay extends Gui
@@ -56,7 +57,7 @@ public class JumpscareOverlay extends Gui
     public void show(double ex, double ey, double ez)
     {
         visible = true;
-        mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation(EyesInTheShadows.varInstanceCommon.jumpScareSound), 1.0F));
+        mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation(EyesInTheShadows.varInstanceCommon.jumpScareSound), Config.eyeJumpscareVolume));
     }
 
     @SubscribeEvent

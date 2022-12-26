@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
@@ -28,7 +29,9 @@ import trollogyadherent.eyesintheshadows.entity.IModEntity;
 import trollogyadherent.eyesintheshadows.packet.PacketHandler;
 import trollogyadherent.eyesintheshadows.packet.PacketUtil;
 import trollogyadherent.eyesintheshadows.packet.packets.InitiateJumpscarePacket;
+import trollogyadherent.eyesintheshadows.util.PotionUtil;
 import trollogyadherent.eyesintheshadows.util.Util;
+import trollogyadherent.eyesintheshadows.util.XSTR;
 
 import javax.vecmath.Vector3d;
 import java.util.List;
@@ -104,8 +107,10 @@ public class EntityEyes extends EntityMob implements IModEntity {
         this.getNavigator().setAvoidsWater(true);
         //this.tasks.addTask(3, new AvoidOcelots(this, EntityOcelot.class, 6.0F, 1.0D, 1.2D));
 
-        this.targetTasks.addTask(3, new TargetTamedWolves(this, EntityWolf.class, 0, false));
-        this.tasks.addTask(4, new EntityAIAttackOnCollide(this, EntityWolf.class, 1.0D, true));
+        if (Config.eyeBaseAttackDamage > 0) {
+            this.targetTasks.addTask(3, new TargetTamedWolves(this, EntityWolf.class, 0, false));
+            this.tasks.addTask(4, new EntityAIAttackOnCollide(this, EntityWolf.class, 1.0D, true));
+        }
 
         this.targetTasks.addTask(1, new EntityAINearestAttackableTarget(this, EntityPlayerMP.class, 0, false));
         this.tasks.addTask(1, new CreepTowardPlayer(this, 0.25D, false));
@@ -117,9 +122,11 @@ public class EntityEyes extends EntityMob implements IModEntity {
           this.tasks.addTask(2, new EntityAIFleeSun(this, 1.0D));
         */
 
-        for (Class c : EyesInTheShadows.varInstanceCommon.entitiesAttackedByEyesList) {
-            this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, c, 0, false));
-            this.tasks.addTask(4, new EntityAIAttackOnCollide(this, c, 1.0D, true));
+        if (Config.eyeBaseAttackDamage > 0) {
+            for (Class c : EyesInTheShadows.varInstanceCommon.entitiesAttackedByEyesList) {
+                this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, c, 0, false));
+                this.tasks.addTask(4, new EntityAIAttackOnCollide(this, c, 1.0D, true));
+            }
         }
         for (Class c : EyesInTheShadows.varInstanceCommon.entitiesThatEyesFleeList) {
             this.tasks.addTask(3, new EntityAIAvoidEntity(this, c, 6.0F, 1.0D, 1.2D));
@@ -175,24 +182,28 @@ public class EntityEyes extends EntityMob implements IModEntity {
 
         if (!this.worldObj.isRemote)
         {
-            if (this.isWet()) {
-                //this.attackEntityFrom(DamageSource.drown, 1.0F);
+            if (this.isWet() && Config.damageFromWet > 0) {
+                this.attackEntityFrom(DamageSource.drown, Config.damageFromWet);
             }
 
-            --this.heightOffsetUpdateTime;
+            if (Config.fly) {
+                --this.heightOffsetUpdateTime;
 
-            if (this.heightOffsetUpdateTime <= 0) {
-                this.heightOffsetUpdateTime = 100;
-                this.heightOffset = 0.5F + (float)this.rand.nextGaussian() * 3.0F;
-            }
+                if (this.heightOffsetUpdateTime <= 0) {
+                    this.heightOffsetUpdateTime = 100;
+                    this.heightOffset = 0.5F + (float) this.rand.nextGaussian() * 3.0F;
+                }
 
-            if (this.getAttackTarget() != null && this.getAttackTarget().posY + (double)this.getAttackTarget().getEyeHeight() > this.posY + (double)this.getEyeHeight() + (double)this.heightOffset) {
-                this.motionY += (0.30000001192092896D - this.motionY) * 0.30000001192092896D;
+                if (this.getAttackTarget() != null && this.getAttackTarget().posY + (double) this.getAttackTarget().getEyeHeight() > this.posY + (double) this.getEyeHeight() + (double) this.heightOffset) {
+                    this.motionY += (0.30000001192092896D - this.motionY) * 0.30000001192092896D;
+                }
             }
         }
 
-        if (!this.onGround && this.motionY < 0.0D) {
-            this.motionY *= 0.6D;
+        if (Config.fly) {
+            if (!this.onGround && this.motionY < 0.0D) {
+                this.motionY *= 0.6D;
+            }
         }
 
         float alpha = Util.getEyeRenderingAlpha(this, Config.eyesCanAttackWhileLit);
@@ -213,6 +224,8 @@ public class EntityEyes extends EntityMob implements IModEntity {
                 }
             }
         //}
+
+        /* Making eyes disappear if a player looks at them */
         if(worldObj != null && alpha > 0) {
             Vec3 eyePosEyes = Vec3.createVectorHelper(posX, posY + 1, posZ);//getPosEyes(this);
             if (getBrightness() > 0) {
@@ -226,6 +239,9 @@ public class EntityEyes extends EntityMob implements IModEntity {
 
                 boolean shouldDisappear = false;
                 for (EntityPlayer player : entities) {
+                    if (player.capabilities.isCreativeMode) {
+                        continue;
+                    }
                     Vec3 playerPosEyes = Vec3.createVectorHelper(player.posX, player.posY + player.getEyeHeight(), player.posZ);
                     if (playerPosEyes.distanceTo(eyePosEyes) > maxWatchDistance) {
                         shouldDisappear = false;
@@ -238,10 +254,19 @@ public class EntityEyes extends EntityMob implements IModEntity {
                     vec31 = vec31.normalize();
                     double d1 = vec3.dotProduct(vec31);
                     shouldDisappear = d1 > 1.0D - 0.025D / d0 && player.canEntityBeSeen(this);
-                }
 
-                if (shouldDisappear) {
-                    disappear(true);
+                    if (shouldDisappear) {
+                        disappear(true);
+                        if (Config.potionLookNames.length > 0) {
+                            String name = Config.potionLookNames[EyesInTheShadows.varInstanceCommon.rand.nextInt(Config.potionLookNames.length)];
+                            Potion p = EyesInTheShadows.varInstanceCommon.potionLookList.get(name);
+                            if (p != null) {
+                                ((EntityLivingBase)player).addPotionEffect(new PotionEffect(p.getId(), Config.potionLookDuration * 20, Config.potionLookAmplifier));
+                            } else {
+                                EyesInTheShadows.warn("No potion found for " + name);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -274,9 +299,9 @@ public class EntityEyes extends EntityMob implements IModEntity {
      */
     @Override
     public boolean attackEntityFrom(DamageSource par1DamageSource, float par2) {
-        return false;
-        //disappear(false);
-        //return true;
+        ///return false;
+        disappear(false);
+        return true;
 
         /*
         // DEBUG!!!!!
@@ -297,6 +322,15 @@ public class EntityEyes extends EntityMob implements IModEntity {
     public boolean attackEntityAsMob(Entity attackedEntity) {
         boolean jumpScared = Config.jumpscare && attackedEntity instanceof EntityPlayerMP;
         if (jumpScared) {
+            if (Config.potionNames.length > 0) {
+                String name = Config.potionNames[EyesInTheShadows.varInstanceCommon.rand.nextInt(Config.potionNames.length)];
+                Potion p = EyesInTheShadows.varInstanceCommon.potionList.get(name);
+                if (p != null) {
+                    ((EntityLivingBase)attackedEntity).addPotionEffect(new PotionEffect(p.getId(), Config.potionDuration * 20, Config.potionAmplifier));
+                } else {
+                    EyesInTheShadows.warn("No potion found for " + name);
+                }
+            }
             jumpscare((EntityPlayerMP) attackedEntity);
             disappear(false);
         }
@@ -423,19 +457,32 @@ public class EntityEyes extends EntityMob implements IModEntity {
         return EyesInTheShadows.varInstanceCommon.laughSound;
     }
 
+    protected float getSoundVolume() {
+        return Config.eyeIdleVolume;
+    }
+
     @Override
     protected void collideWithEntity(Entity entityIn) {
         if (entityIn instanceof EntityPlayer) {
             disappear(true);
+            if (Config.potionCollisionNames.length > 0) {
+                String name = Config.potionCollisionNames[EyesInTheShadows.varInstanceCommon.rand.nextInt(Config.potionCollisionNames.length)];
+                Potion p = EyesInTheShadows.varInstanceCommon.potionCollisionList.get(name);
+                if (p != null) {
+                    ((EntityLivingBase)entityIn).addPotionEffect(new PotionEffect(p.getId(), Config.potionCollisionDuration * 20, Config.potionCollisionAmplifier));
+                } else {
+                    EyesInTheShadows.warn("No potion found for " + name);
+                }
+            }
         }
         //super.collideWithEntity(entityIn);
     }
 
     private void disappear(boolean playDeathSound) {
-        //damageEntity(DamageSource.generic, 1);
-        kill();
+        this.setHealth(1);
+        damageEntity(DamageSource.outOfWorld, 1);
         if (playDeathSound) {
-            this.playSound(getDeathSound(), this.getSoundVolume(), this.getSoundPitch());
+            this.playSound(getDeathSound(), Config.eyeDisappearVolume, this.getSoundPitch());
         }
     }
 

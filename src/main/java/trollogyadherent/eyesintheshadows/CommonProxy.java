@@ -1,10 +1,11 @@
 package trollogyadherent.eyesintheshadows;
 
-import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.common.MinecraftForge;
 import trollogyadherent.eyesintheshadows.entity.entities.EntityEyes;
 import trollogyadherent.eyesintheshadows.event.CommonEventHandler;
@@ -39,8 +40,6 @@ public class CommonProxy {
         EntityRegistry.registerModEntity(EntityEyes.class, "Eyes", ++ modEntityID, EyesInTheShadows.instance, 80, 3, false);
         Util.registerSpawnEgg("Eyes", 0x000000, 0x7F0000);
 
-
-        //FMLCommonHandler.instance().bus().register(new ServerEventHandler());
         MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
     }
 
@@ -57,6 +56,10 @@ public class CommonProxy {
             MobUtil.printMobNames();
         }
         EyesInTheShadows.varInstanceCommon.postInitHook();
+
+        EyesSpawningManager eyesSpawningManager = new EyesSpawningManager();
+        MinecraftForge.EVENT_BUS.register(eyesSpawningManager);
+        FMLCommonHandler.instance().bus().register(eyesSpawningManager);
     }
 
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {

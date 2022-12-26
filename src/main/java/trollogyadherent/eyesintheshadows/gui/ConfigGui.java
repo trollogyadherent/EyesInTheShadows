@@ -18,12 +18,14 @@ public class ConfigGui extends GuiConfig {
     private static IConfigElement ceAggro = new ConfigElement(Config.config.getCategory(Config.Categories.eye_aggression));
     private static IConfigElement ceSpawning = new ConfigElement(Config.config.getCategory(Config.Categories.spawning));
     private static IConfigElement ceMisc = new ConfigElement(Config.config.getCategory(Config.Categories.misc));
+    private static IConfigElement cePotion = new ConfigElement(Config.config.getCategory(Config.Categories.potion));
     private static IConfigElement ceMobInteractions = new ConfigElement(Config.config.getCategory(Config.Categories.mob_interactions));
     private static IConfigElement ceVisual = new ConfigElement(Config.config.getCategory(Config.Categories.visual));
+    private static IConfigElement ceSounds = new ConfigElement(Config.config.getCategory(Config.Categories.sound_volumes));
 
     public ConfigGui(GuiScreen parent) {
         //this.parentScreen = parent;
-        super(parent, ImmutableList.of(ceGeneral, ceAggro, ceSpawning, ceMobInteractions, ceVisual, ceMisc), Tags.MODID, Tags.MODID, false, false, I18n.format(Tags.MODID + ".configgui.title"), EyesInTheShadows.confFile.getAbsolutePath());
+        super(parent, ImmutableList.of(ceGeneral, ceAggro, ceSpawning, cePotion, ceMobInteractions, ceVisual, ceSounds, ceMisc), Tags.MODID, Tags.MODID, false, false, I18n.format(Tags.MODID + ".configgui.title"), EyesInTheShadows.confFile.getAbsolutePath());
         EyesInTheShadows.debug("Instantiating config gui");
     }
 

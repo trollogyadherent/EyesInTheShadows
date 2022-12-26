@@ -3,7 +3,6 @@ package trollogyadherent.eyesintheshadows.util;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
-import de.matthiasmann.twl.utils.PNGDecoder;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.util.MathHelper;
@@ -15,7 +14,6 @@ import trollogyadherent.eyesintheshadows.spawnegg.EyesMonsterPlacer;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,18 +28,6 @@ public class Util {
         }
         byte[] b = new byte[totalLen - a.length];
         return concatByteArrays(b, a);
-    }
-
-    public static boolean pngIsSane(File imageFile) {
-        try {
-            PNGDecoder pngDecoder = new PNGDecoder(Files.newInputStream(imageFile.toPath()));
-            if (pngDecoder.getWidth() > EyesInTheShadows.maxPngDimension || pngDecoder.getHeight() > EyesInTheShadows.maxPngDimension) {
-                return false;
-            }
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
     }
 
     public static byte[] concatByteArrays(byte[] a, byte[] b) throws IOException {

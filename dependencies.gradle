@@ -13,8 +13,9 @@ dependencies {
     //shadowImplementation('io.openliberty.features:jsonp-1.1:20.0.0.10')
     //compile(deobfCurse("dynamicsurrounding-238891:2642381"))
     //compile(deobfCurse("custom-main-menu-226406:2264779"))
-    shadowImplementation('com.eclipsesource.minimal-json:minimal-json:0.9.5')
-    shadowImplementation("org.l33tlabs.twl:pngdecoder:1.0")
+
+    //shadowImplementation('com.eclipsesource.minimal-json:minimal-json:0.9.5')
+    //shadowImplementation("org.l33tlabs.twl:pngdecoder:1.0")
 
     compile fileTree(dir: 'libs', include: '*.jar')
 }
