@@ -23,6 +23,8 @@ Please DO NOT report any issues or send any requests concerning this port to gig
 <br>
 Original mod showcase by Mischief of Mice:<br>
 [![Original mod showcase by Mischief of Mice](https://img.youtube.com/vi/JxcLQwxwgyw/0.jpg)](https://www.youtube.com/watch?v=JxcLQwxwgyw)
+<br>
+For an easier cofiguration, use the mod [ConfigMaxxing](https://github.com/trollogyadherent/ConfigMaxxing). To allow passive mobs to attack Eyes (if you wish to configure this), you will need the mod [Anger Issue](https://github.com/trollogyadherent/AngerIssue).
 
 ### Changes from the original
 * Most eye properties are configurable.
