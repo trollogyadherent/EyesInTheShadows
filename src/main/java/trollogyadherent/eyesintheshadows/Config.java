@@ -379,7 +379,7 @@ public class Config {
         damageFromWet = (float) damageFromWetProperty.getDouble();
 
         Property spawnCycleSpawnWarningTimeProperty = config.get(Categories.misc, "spawnCycleSpawnWarningTime", Defaults.spawnCycleSpawnWarningTime, "Warning if a spawn cycle takes longer than this amount of milliseconds.", 0, Float.MAX_VALUE);
-        spawnCycleSpawnWarningTime = spawnCycleSpawnWarningTimeProperty.getInt();
+        spawnCycleSpawnWarningTime = (int) spawnCycleSpawnWarningTimeProperty.getDouble();
 
 
         /* Mob interactions */

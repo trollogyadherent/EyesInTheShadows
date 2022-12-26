@@ -7,7 +7,6 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.PropertyManager;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -15,7 +14,6 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.SpawnerAnimals;
 import net.minecraft.world.World;
 import trollogyadherent.eyesintheshadows.entity.entities.EntityEyes;
-import trollogyadherent.eyesintheshadows.util.DimensionUtil;
 import trollogyadherent.eyesintheshadows.util.TimeUtil;
 
 import java.util.List;
@@ -85,7 +83,7 @@ public class EyesSpawningManager {
 
             ticks++;
 
-            int daysUntilNextHalloween = TimeUtil.getDaysUntilNextHalloween();
+            int daysUntilNextHalloween = EyesInTheShadows.varInstanceCommon.daysUntilHalloween;
             int minutesToMidnight = TimeUtil.getMinutesToMidnight();
 
             cooldown = calculateSpawnCycleInterval(daysUntilNextHalloween, minutesToMidnight);

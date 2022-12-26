@@ -13,10 +13,7 @@ import trollogyadherent.configmaxxing.ConfigMaxxing;
 import trollogyadherent.eyesintheshadows.Config;
 import trollogyadherent.eyesintheshadows.EyesInTheShadows;
 import trollogyadherent.eyesintheshadows.Tags;
-import trollogyadherent.eyesintheshadows.util.DimensionUtil;
-import trollogyadherent.eyesintheshadows.util.MobUtil;
-import trollogyadherent.eyesintheshadows.util.PotionUtil;
-import trollogyadherent.eyesintheshadows.util.XSTR;
+import trollogyadherent.eyesintheshadows.util.*;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -46,6 +43,7 @@ public class VarInstanceCommon {
 
     public Field providersField = ReflectionHelper.findField(DimensionManager.class, "providers");
     public boolean witcheryLoaded;
+    public int daysUntilHalloween = TimeUtil.getDaysUntilNextHalloween();
 
     public VarInstanceCommon() {
         superTargetEntityField.setAccessible(true);
